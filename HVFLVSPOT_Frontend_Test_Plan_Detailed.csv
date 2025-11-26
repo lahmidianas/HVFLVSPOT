@@ -1,0 +1,109 @@
+Test Type,Feature / Page,Scenario,Description,Expected Behavior,Validation Criteria,Preconditions,Test Steps,Automation,Automation Location,Actual Result,Status
+Component,Header / Navigation,Not Authenticated,"Render the global header with no session. 
+Ensure public-only navigation is visible and there is no flash of authenticated UI. Logo must route home; layout must be stable on desktop and mobile.","Public navigation items are visible (Home, All Events, Search, Tickets, Sign In). Auth-only items (profile, logout) are hidden. Header is keyboard navigable, with visible focus. Logo routes to homepage without full reload.",Verify presence/absence of items as specified. Tab through links to confirm order and focus. Click logo and confirm navigation to homepage with client-side routing. No console errors.,User is not authenticated (no Supabase session in localStorage). App is running locally.,"1. Clear Supabase auth storage.
+2. Open the application root URL.
+3. Observe the header navigation in the top bar.
+4. Tab through focusable items.",Automated (Vitest - skipped),src/lib/components/Header/__tests__/Header.test.ts,Automated test skipped (temporarily disabled).,Not Run
+,,Authenticated,"Render the header with a valid session.
+Authenticated controls appear without layout shift and accessibility remains intact.",User menu/avatar and logout are visible. Sign In is hidden. Header remains responsive and accessible.,"Stub an authenticated session; confirm user controls appear, Sign In is absent, and logout is present. Check tab order includes new controls; no large layout shift.",Valid Supabase session exists in localStorage for a standard user.,"1. Seed a valid Supabase session.
+2. Reload the application.
+3. Observe the header navigation and user controls.
+4. Click the Sign Out button.",Automated (Vitest - skipped),src/lib/components/Header/__tests__/Header.test.ts,Automated test skipped (temporarily disabled).,Not Run
+,EventCard,Normal render,"Render a complete event card with title, date/time, city, min price, and image. 
+Provide a primary CTA to view details/purchase.","All fields render (formatted date/price, location, image alt text). Primary CTA links to the associated detail route.",Inspect DOM for all fields. Hover/focus CTA to confirm accessible name. Check href matches event detail pattern. No text overflow beyond intended ellipsis.,"At least one upcoming event exists with full data (title, date, location, price, image).","1. Navigate to a page where EventCard is rendered (home or search).
+2. Ensure event has full data.
+3. Inspect card content.
+4. Hover and focus the Get Tickets CTA.",Automated (Vitest),src/lib/components/events/__tests__/EventCard.test.ts - renders the event summary with CTA for the supplied model,Covered by automated test; execution passed.,Pass
+,,Broken image,"Render an event card where the image fails or is missing; 
+degrade gracefully using a fallback or styled placeholder.",A fallback image/placeholder appears with consistent dimensions. No broken image icon. Text and CTA remain usable.,Simulate image error and verify fallback. Confirm card dimensions unchanged and CTA still works.,Event exists but image URL is invalid or missing. App is running in dev.,"1. Use an event with a broken/empty image_url.
+2. Open page where the EventCard renders it.
+3. Watch image loading.
+4. Inspect resulting thumbnail or placeholder.",Automated (Vitest),src/lib/components/events/__tests__/EventCard.test.ts - falls back to the placeholder image when no image is provided,Covered by automated test: src/lib/components/events/__tests__/EventCard.test.ts – falls back to the placeholder image when no image is provided. Execution passed.,Pass
+,Toasts,Add/Remove,"Display a toast with title and optional message; 
+it should auto-dismiss by default and be dismissible via a close button.","Toast appears in the container, auto-dismisses after duration, and closes immediately on close action. Multiple toasts stack without overlap.",Trigger toast; confirm presence and auto-dismissal within expected time. Click close and ensure removal. Verify stacking order and no focus trap.,Toast/notification system is implemented and wired to trigger actions (e.g. success and error).,"1. Trigger a success toast (e.g. after a mock action).
+2. Trigger an error toast.
+3. Observe toast stacking behavior.
+4. Wait for auto-dismiss or manually close toasts.",Manual only,,Pending manual execution.,Not Run
+Page,Home,Happy,Render homepage with successful backend response for featured/recommended events.,Hero and top sections load; skeletons are replaced by live data; an event grid appears with valid links.,Mock success; confirm non-empty grid; click an event link and verify navigation to detail. No console warnings.,Supabase events and recommended endpoints return at least one event. User is authenticated.,"1. Seed authenticated session.
+2. Mock featured and recommended event APIs with valid data.
+3. Load the home page.
+4. Scroll to Recommended and Featured sections.",Automated (Playwright E2E),tests/e2e/home.spec.ts - renders recommended and featured sections when data is returned,Automated test failed: locator not found/strict mode or assertion failure in Playwright (see spec).,Fail
+,,Empty,Render homepage when backend returns zero events.,An empty-state component with explanatory copy and a CTA to browse/search is shown.,Mock empty response; verify empty-state content and CTA navigation. No runtime errors.,Supabase events endpoints return an empty list for featured and recommended feeds.,"1. Seed authenticated session.
+2. Mock featured and recommended APIs to return empty arrays.
+3. Load the home page.
+4. Observe the empty states for each section.",Automated (Playwright E2E),tests/e2e/home.spec.ts - shows empty states when the API returns no events,Automated test failed (connection refused to http://localhost:4173). tests/e2e/home.spec.ts – shows empty states when the API returns no events.,Fail
+,,Error,Render homepage when backend fails (500 or network error).,An error banner/message with a Retry action is displayed. Page remains interactive and accessible.,Mock rejected fetch; confirm error UI and Retry attempts a new request. No undefined property access.,Requests to events/recommended and events feeds return 500 or rejected fetch.,"1. Seed authenticated session.
+2. Mock featured and recommended APIs to return 500 or fail.
+3. Load the home page.
+4. Observe error messages and any retry controls.",Automated (Playwright E2E),tests/e2e/home.spec.ts - surfaces error messaging when APIs fail,Automated test failed (connection refused to http://localhost:4173). tests/e2e/home.spec.ts – surfaces error messaging when APIs fail.,Fail
+,Search,Happy,"Render search with initial filters; updating filters syncs URL; 
+reload preserves state; results display as cards.",Filters update query string; reloading keeps filters and results. Cards link to valid detail pages.,Mock success with items; change filters; confirm URL updates; reload and validate consistent results. Verify links are valid.,Search API returns at least one matching event for a sample query string.,"1. Seed authenticated session.
+2. Mock search and supporting APIs to return at least one event.
+3. Navigate to /events with a valid query.
+4. Interact with filters and click event CTA.",Automated (Playwright E2E),tests/e2e/search.spec.ts - displays search results and navigates to detail pages,Automated test failed: locator not found/strict mode or assertion failure in Playwright (see spec).,Fail
+,,Empty,Render search when no results match filters.,Empty-state panel explains no matches and offers a Clear Filters control to broaden the search.,Mock empty; verify empty-state and that Clear Filters resets URL and repopulates results when available.,Search API returns an empty result set for a given query.,"1. Seed authenticated session.
+2. Mock search API to return an empty list.
+3. Navigate to /events with a query that yields no matches.
+4. Observe empty state and Clear Filters behavior.",Automated (Playwright E2E),tests/e2e/search.spec.ts - shows the empty state when no events match the query,Automated test failed (connection refused to http://localhost:4173). tests/e2e/search.spec.ts – shows the empty state when no events match the query.,Fail
+,,Error,"Render search when backend fails; 
+the page must not access properties on undefined data.",Concise error message is shown. No attempts to map over undefined arrays. Page remains interactive.,Mock rejected fetch; assert no exceptions; verify error component and no console errors related to undefined access.,Search API returns a 500 error or rejected fetch for the given query.,"1. Seed authenticated session.
+2. Mock search API to return 500 or fail.
+3. Navigate to /events with any query.
+4. Observe error UI and confirm no crashes.",Automated (Playwright E2E),tests/e2e/search.spec.ts - shows an error state when the search API fails,Automated test failed (connection refused to http://localhost:4173). tests/e2e/search.spec.ts – shows an error state when the search API fails.,Fail
+,Event Detail,Upcoming,"Render an upcoming event with available tickets; 
+show all descriptive fields and purchase CTA.","Title, date/time, venue, description, image, ticket types are displayed. Purchase CTA is enabled.",Mock event with tickets; confirm fields render and CTA is enabled. Follow CTA and verify navigation/action.,Event exists in Supabase with at least one ticket type with quantity > 0.,"1. Mock event detail and tickets APIs with future-dated event and available tickets.
+2. Navigate to /events/{id}.
+3. Verify event info and ticket list.
+4. Start checkout via Get Tickets.",Automated (Playwright E2E),tests/e2e/event-detail.spec.ts - shows information and allows navigating to checkout for upcoming events,Automated test failed: locator not found/strict mode or assertion failure in Playwright (see spec).,Fail
+,,Sold Out,Render a sold-out event; clearly indicate unavailability and prevent purchase.,"A sold-out state is displayed; purchase CTA is disabled or replaced (e.g., notify).",Mock sold-out; verify indicator and disabled/replaced CTA. No purchase path available.,Event exists but all tickets have quantity = 0.,"1. Mock event detail and tickets APIs where all ticket quantities are 0.
+2. Navigate to /events/{id}.
+3. Observe Sold Out indicator.
+4. Verify ticket purchase controls are disabled or hidden.",Automated (Playwright E2E),tests/e2e/event-detail.spec.ts - displays a sold out indicator when no tickets remain,Automated test failed (connection refused to http://localhost:4173). tests/e2e/event-detail.spec.ts – displays a sold out indicator when no tickets remain.,Fail
+,,Past,Render a past event; prevent purchase and inform the user.,An 'event ended' message is shown; no purchase actions are available.,Mock past event; confirm ended message and absence/disable of purchase controls.,Event exists with a start_date in the past and no active tickets.,"1. Mock event detail with a past start_date and no purchasable tickets.
+2. Navigate to /events/{id}.
+3. Observe Tickets Coming Soon or Event Ended messaging.
+4. Confirm purchase CTA is absent.",Automated (Playwright E2E),tests/e2e/event-detail.spec.ts - shows a coming soon state for events without purchasable tickets (e.g. past event),Automated test failed (connection refused to http://localhost:4173). tests/e2e/event-detail.spec.ts – shows a coming soon state for events without purchasable tickets (e.g. past event).,Fail
+,,404,Render a missing event ID; present a friendly not-found experience.,A not-found component appears with guidance and a way back to browse events.,Mock 404; confirm not-found UI and working navigation control. No unhandled exceptions.,Requested event ID does not exist in Supabase events table.,"1. Mock event detail API to return 406/No rows.
+2. Navigate to /events/non-existent-id.
+3. Observe Event Not Found UI.
+4. Click Browse All Events link.",Automated (Playwright E2E),tests/e2e/event-detail.spec.ts - renders the not found state for unknown event IDs,Automated test failed (connection refused to http://localhost:4173). tests/e2e/event-detail.spec.ts – renders the not found state for unknown event IDs.,Fail
+,Wallet,Unauthenticated,Open wallet without a session; the app must not leak data and should guide sign-in.,Redirect to login or show a sign-in prompt; no protected content flashes.,Clear session; visit wallet; confirm redirect/prompt appears immediately and protected components are not rendered.,No Supabase session in localStorage. Wallet route is accessible in the app.,"1. Ensure no Supabase auth session in localStorage.
+2. Navigate directly to /wallet.
+3. Observe redirect behavior.
+4. Confirm login page includes redirect back to /wallet.",Automated (Playwright E2E),tests/e2e/wallet.spec.ts - redirects anonymous visitors to the login page,Automated test failed: URL assertion mismatch (expected encoded redirect).,Fail
+,,Authenticated,"Open wallet with a valid session that has tickets; 
+render legible entries and QR previews if available.",Tickets list renders; upcoming and past are separated if supported; each item links to its event.,Mock authenticated session and non-empty list; confirm fields and links per item.,Valid Supabase session exists. Wallet API returns at least one confirmed ticket.,"1. Seed authenticated session.
+2. Mock wallet API to return upcoming and past tickets.
+3. Navigate to /wallet.
+4. Verify ticket cards and group headings (Upcoming, Past).",Automated (Playwright E2E),tests/e2e/wallet.spec.ts - renders tickets for authenticated users,Automated test failed (connection refused to http://localhost:4173). tests/e2e/wallet.spec.ts – renders tickets for authenticated users.,Fail
+,,Empty,"Open wallet with a valid session and no tickets;
+ show a neutral empty state and suggest next steps.",An empty-state message is shown with a CTA to browse events.,Mock empty list; verify empty-state and CTA navigation.,Valid Supabase session exists. Wallet API returns an empty list.,"1. Seed authenticated session.
+2. Mock wallet API to return an empty list.
+3. Navigate to /wallet.
+4. Observe No tickets yet state and Browse Events CTA.",Automated (Playwright E2E),tests/e2e/wallet.spec.ts - shows the empty state when a wallet has no tickets,Automated test failed (connection refused to http://localhost:4173). tests/e2e/wallet.spec.ts – shows the empty state when a wallet has no tickets.,Fail
+,,Error,"Wallet call fails for an authenticated user; 
+the page must handle failure without exposing stack traces.",A concise error message is shown with a retry or navigation action; the page remains stable.,Mock rejected fetch; confirm error UI and retry action. No console errors.,Valid Supabase session exists. Wallet API returns 500 or rejected fetch.,"1. Seed authenticated session.
+2. Mock wallet API to return 500 or fail.
+3. Navigate to /wallet.
+4. Observe error messaging and any retry behavior.",Automated (Playwright E2E),tests/e2e/wallet.spec.ts - surfaces an error when the wallet API fails,Automated test failed (connection refused to http://localhost:4173). tests/e2e/wallet.spec.ts – surfaces an error when the wallet API fails.,Fail
+Global,Routing,Link validation,"Validate that all navigation and card links resolve to implemented 
+routes and that route patterns match the folder structure.",No link leads to a 404 caused by path mismatches. Detail links consistently use a single convention across the app.,Collect and attempt navigation for all primary links from Header and EventCard on core pages. Assert successful render for each route.,"Core routes are implemented: /, /events, /search, /wallet, /login. Header links are wired.","1. Seed authenticated session.
+2. Load home page.
+3. Use header links to visit All Events, Search, Wallet, and Home.
+4. Clear session and verify Sign Up/Login path.",Automated (Playwright E2E),tests/e2e/global.spec.ts - navigation smoke test via header links,Automated test failed: strict mode violation when clicking Home link (multiple matches).,Fail
+,Error Handling,Network failure,"Simulate the backend becoming unreachable across multiple pages; 
+ensure the UI remains usable and communicates clearly.","A global or page-level connectivity message appears with non-blocking recovery actions (e.g., Retry).","Point the API base to an unreachable URL and load Home, Search, Event Detail, and Wallet. Confirm connectivity messages and absence of undefined-access errors.",API base URL or network layer can be configured to simulate failure (offline or 500 errors).,"1. Configure network or route mocks to fail for core APIs.
+2. Load home page and search page.
+3. Observe global error states.
+4. Confirm there are no unhandled exceptions.",Automated (Playwright E2E),tests/e2e/global.spec.ts - shows graceful network failure messages across pages,Automated test failed: multiple matching error elements (strict mode violation).,Fail
+,Accessibility,Baseline check,"Perform a basic accessibility validation on core pages
+ to ensure assistive tech can navigate the UI.",Each page exposes a main landmark; interactive elements have accessible names; inputs have labels; focus is visible; contrast is acceptable.,"Run an automated a11y check and a manual keyboard-only pass on Home, Search, Event Detail, Login, and Wallet. Confirm no critical issues remain.","Axe accessibility tooling is installed in the test suite. Key pages are routable: /, /events, event detail, /login, /wallet.","1. Seed authenticated session.
+2. Run automated Axe accessibility checks against key routes.
+3. Manually tab through interactive elements.
+4. Record any WCAG A/AA violations.",Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail
+,,,,,,,,Automated (Playwright + Axe),tests/e2e/global.spec.ts - meets baseline accessibility expectations on key routes,Automated test failed: Axe reported missing <title> (document-title violation).,Fail

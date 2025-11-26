@@ -1,0 +1,140 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation "Main navigation" [ref=e5]:
+      - generic [ref=e6]:
+        - link "HVFLVSPOT homepage" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - text: HVFLVSPOT
+        - generic [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "All Events" [ref=e11] [cursor=pointer]:
+            - /url: /events
+          - link "Events" [ref=e12] [cursor=pointer]:
+            - /url: /search
+          - link "Tickets" [ref=e13] [cursor=pointer]:
+            - /url: /wallet
+        - link "Sign Up" [ref=e15] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e16]:
+    - main [ref=e17]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Find Your Perfect Event" [level=1] [ref=e21]
+          - paragraph [ref=e22]: Discover amazing events happening near you. Use the filters below to find exactly what you're looking for.
+        - generic [ref=e24]:
+          - generic:
+            - img
+          - textbox "Search events by keyword" [ref=e25]:
+            - /placeholder: Search for events, artists, venues...
+            - text: error
+        - search "Event search filters" [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: Category
+              - combobox "Category" [ref=e30]:
+                - option "All Categories" [selected]
+                - option "Festival"
+              - generic [ref=e31]: Filter events by category
+            - generic [ref=e32]:
+              - generic [ref=e33]: City or Venue
+              - textbox "City or Venue" [ref=e34]:
+                - /placeholder: Enter city or venue
+              - generic [ref=e35]: Filter events by city or venue
+            - generic [ref=e36]:
+              - generic [ref=e37]: Price Range
+              - generic [ref=e38]:
+                - spinbutton "Minimum price" [ref=e39]
+                - spinbutton "Maximum price" [ref=e40]
+            - generic [ref=e41]:
+              - generic [ref=e42]: Date Range
+              - generic [ref=e43]:
+                - textbox "Start date" [ref=e44]
+                - textbox "End date" [ref=e45]
+            - button "Clear all search filters" [ref=e47] [cursor=pointer]: Clear Filters
+      - region "Search Results" [ref=e49]:
+        - heading "Search Results" [level=2] [ref=e50]
+        - generic [ref=e52]:
+          - img [ref=e54]
+          - heading "No Events Found" [level=3] [ref=e56]
+          - paragraph [ref=e57]: "We couldn't find any events matching your search criteria:"
+          - generic [ref=e60]: "\"error\""
+          - generic [ref=e61]:
+            - button "Clear Filters & Show All Events" [ref=e62] [cursor=pointer]:
+              - img [ref=e63]
+              - text: Clear Filters & Show All Events
+            - link "Browse all events" [ref=e66] [cursor=pointer]:
+              - /url: /events
+  - contentinfo [ref=e67]:
+    - generic [ref=e68]:
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - link "HVFLVSPOT homepage" [ref=e71] [cursor=pointer]:
+            - /url: /
+            - text: HVFLVSPOT
+          - paragraph [ref=e72]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading "Company" [level=3] [ref=e76]
+            - navigation "Company navigation" [ref=e77]:
+              - link "Learn more about HVFLVSPOT" [ref=e78] [cursor=pointer]:
+                - /url: /about
+                - text: About Us
+              - link "Contact HVFLVSPOT support" [ref=e79] [cursor=pointer]:
+                - /url: /contact
+                - text: Contact
+              - link "View career opportunities" [ref=e80] [cursor=pointer]:
+                - /url: /careers
+                - text: Careers
+              - link "Read our blog" [ref=e81] [cursor=pointer]:
+                - /url: /blog
+                - text: Blog
+          - generic [ref=e82]:
+            - heading "Legal" [level=3] [ref=e83]
+            - navigation "Legal navigation" [ref=e84]:
+              - link "Read terms of service" [ref=e85] [cursor=pointer]:
+                - /url: /terms
+                - text: Terms of Service
+              - link "Read privacy policy" [ref=e86] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "Cookie policy" [ref=e87] [cursor=pointer]:
+                - /url: /cookies
+                - text: Cookie Policy
+              - link "Refund policy" [ref=e88] [cursor=pointer]:
+                - /url: /refunds
+                - text: Refund Policy
+        - generic [ref=e89]:
+          - heading "Stay Connected" [level=3] [ref=e90]
+          - generic [ref=e91]:
+            - link "Follow us on Twitter" [ref=e92] [cursor=pointer]:
+              - /url: "#"
+              - img "Twitter" [ref=e93]
+            - link "Follow us on Instagram" [ref=e95] [cursor=pointer]:
+              - /url: "#"
+              - img "Instagram" [ref=e96]
+            - link "Follow us on Facebook" [ref=e98] [cursor=pointer]:
+              - /url: "#"
+              - img "Facebook" [ref=e99]
+          - generic [ref=e101]:
+            - paragraph [ref=e102]: Get notified about new events
+            - generic [ref=e103]:
+              - textbox "Email address for newsletter" [ref=e104]:
+                - /placeholder: Enter your email
+              - button "Subscribe to newsletter" [ref=e105] [cursor=pointer]: Subscribe
+      - generic [ref=e107]:
+        - paragraph [ref=e109]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e111]:
+          - link "Get help and support" [ref=e112] [cursor=pointer]:
+            - /url: /help
+            - text: Help Center
+          - link "Accessibility information" [ref=e113] [cursor=pointer]:
+            - /url: /accessibility
+            - text: Accessibility
+          - link "View sitemap" [ref=e114] [cursor=pointer]:
+            - /url: /sitemap
+            - text: Sitemap
+```

@@ -1,0 +1,144 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation "Main navigation" [ref=e5]:
+      - generic [ref=e6]:
+        - link "HVFLVSPOT homepage" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - text: HVFLVSPOT
+        - generic [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "All Events" [ref=e11] [cursor=pointer]:
+            - /url: /events
+          - link "Events" [ref=e12] [cursor=pointer]:
+            - /url: /search
+          - link "Tickets" [ref=e13] [cursor=pointer]:
+            - /url: /wallet
+        - link "Sign Up" [ref=e15] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e16]:
+    - main [ref=e17]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - img [ref=e27]
+          - generic [ref=e29]: Discover Amazing Events
+        - heading "Find Your Next Adventure" [level=1] [ref=e30]:
+          - text: Find Your Next
+          - generic [ref=e31]: Adventure
+        - paragraph [ref=e32]: Discover and book tickets for the best concerts, festivals, and parties near you. Your perfect event is just a click away.
+        - generic [ref=e33]:
+          - link "Browse Events" [ref=e34] [cursor=pointer]:
+            - /url: /events
+            - generic [ref=e38]:
+              - img [ref=e39]
+              - text: Browse Events
+          - link "Learn More" [ref=e41] [cursor=pointer]:
+            - /url: /about
+            - text: Learn More
+            - img [ref=e42]
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - heading "Verified Events" [level=3] [ref=e49]
+            - paragraph [ref=e50]: All events are verified and secure
+          - generic [ref=e51]:
+            - img [ref=e53]
+            - heading "Instant Booking" [level=3] [ref=e55]
+            - paragraph [ref=e56]: Book tickets instantly with secure payment
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - heading "Personalized" [level=3] [ref=e61]
+            - paragraph [ref=e62]: Get recommendations based on your interests
+      - region "Explore by Category" [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - heading "Explore by Category" [level=2] [ref=e69]
+            - paragraph [ref=e70]: Discover amazing events across different categories and find your perfect experience
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - img "Error" [ref=e73]
+              - paragraph [ref=e75]: Unable to load categories
+              - paragraph [ref=e76]: "TypeError: Failed to fetch"
+            - button "Try Again" [ref=e77] [cursor=pointer]
+      - region "Upcoming Events" [ref=e78]:
+        - generic [ref=e79]:
+          - heading "Upcoming Events" [level=2] [ref=e80]
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - img [ref=e83]
+              - paragraph [ref=e85]: Unable to load events
+              - paragraph [ref=e86]: Unable to load events. Please try again.
+            - button "Retry loading featured events" [ref=e87] [cursor=pointer]: Try Again
+  - contentinfo [ref=e88]:
+    - generic [ref=e89]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - link "HVFLVSPOT homepage" [ref=e92] [cursor=pointer]:
+            - /url: /
+            - text: HVFLVSPOT
+          - paragraph [ref=e93]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Company" [level=3] [ref=e97]
+            - navigation "Company navigation" [ref=e98]:
+              - link "Learn more about HVFLVSPOT" [ref=e99] [cursor=pointer]:
+                - /url: /about
+                - text: About Us
+              - link "Contact HVFLVSPOT support" [ref=e100] [cursor=pointer]:
+                - /url: /contact
+                - text: Contact
+              - link "View career opportunities" [ref=e101] [cursor=pointer]:
+                - /url: /careers
+                - text: Careers
+              - link "Read our blog" [ref=e102] [cursor=pointer]:
+                - /url: /blog
+                - text: Blog
+          - generic [ref=e103]:
+            - heading "Legal" [level=3] [ref=e104]
+            - navigation "Legal navigation" [ref=e105]:
+              - link "Read terms of service" [ref=e106] [cursor=pointer]:
+                - /url: /terms
+                - text: Terms of Service
+              - link "Read privacy policy" [ref=e107] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "Cookie policy" [ref=e108] [cursor=pointer]:
+                - /url: /cookies
+                - text: Cookie Policy
+              - link "Refund policy" [ref=e109] [cursor=pointer]:
+                - /url: /refunds
+                - text: Refund Policy
+        - generic [ref=e110]:
+          - heading "Stay Connected" [level=3] [ref=e111]
+          - generic [ref=e112]:
+            - link "Follow us on Twitter" [ref=e113] [cursor=pointer]:
+              - /url: "#"
+              - img "Twitter" [ref=e114]
+            - link "Follow us on Instagram" [ref=e116] [cursor=pointer]:
+              - /url: "#"
+              - img "Instagram" [ref=e117]
+            - link "Follow us on Facebook" [ref=e119] [cursor=pointer]:
+              - /url: "#"
+              - img "Facebook" [ref=e120]
+          - generic [ref=e122]:
+            - paragraph [ref=e123]: Get notified about new events
+            - generic [ref=e124]:
+              - textbox "Email address for newsletter" [ref=e125]:
+                - /placeholder: Enter your email
+              - button "Subscribe to newsletter" [ref=e126] [cursor=pointer]: Subscribe
+      - generic [ref=e128]:
+        - paragraph [ref=e130]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e132]:
+          - link "Get help and support" [ref=e133] [cursor=pointer]:
+            - /url: /help
+            - text: Help Center
+          - link "Accessibility information" [ref=e134] [cursor=pointer]:
+            - /url: /accessibility
+            - text: Accessibility
+          - link "View sitemap" [ref=e135] [cursor=pointer]:
+            - /url: /sitemap
+            - text: Sitemap
+```

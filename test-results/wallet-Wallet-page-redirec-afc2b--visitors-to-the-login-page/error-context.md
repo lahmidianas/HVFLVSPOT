@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation "Main navigation" [ref=e5]:
+      - generic [ref=e6]:
+        - link "HVFLVSPOT homepage" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - text: HVFLVSPOT
+        - generic [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "All Events" [ref=e11] [cursor=pointer]:
+            - /url: /events
+          - link "Events" [ref=e12] [cursor=pointer]:
+            - /url: /search
+          - link "Tickets" [ref=e13] [cursor=pointer]:
+            - /url: /wallet
+        - link "Sign Up" [ref=e15] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e16]:
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - link "HVFLVSPOT" [ref=e20] [cursor=pointer]:
+            - /url: /
+            - heading "HVFLVSPOT" [level=1] [ref=e21]
+          - heading "Welcome back" [level=2] [ref=e22]
+          - paragraph [ref=e23]: Sign in to your account to continue
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: Email Address *
+              - generic [ref=e30]:
+                - generic:
+                  - img
+                - textbox "Email Address *" [ref=e31]:
+                  - /placeholder: Enter your email address
+                - generic [ref=e32]: Enter your email address to sign in
+            - generic [ref=e33]:
+              - generic [ref=e34]: Password *
+              - generic [ref=e35]:
+                - generic:
+                  - img
+                - textbox "Password *" [ref=e36]:
+                  - /placeholder: Enter your password
+                - generic [ref=e37]: Enter your account password
+            - generic [ref=e38]:
+              - button "Sign In" [ref=e39] [cursor=pointer]:
+                - generic [ref=e42]:
+                  - img [ref=e43]
+                  - text: Sign In
+              - generic [ref=e46]: Click to sign in to your account
+          - paragraph [ref=e48]:
+            - text: Don't have an account?
+            - button "Sign up here" [ref=e49] [cursor=pointer]
+          - link "Back to Homepage" [ref=e51] [cursor=pointer]:
+            - /url: /
+            - img [ref=e52]
+            - text: Back to Homepage
+  - contentinfo [ref=e54]:
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - link "HVFLVSPOT homepage" [ref=e58] [cursor=pointer]:
+            - /url: /
+            - text: HVFLVSPOT
+          - paragraph [ref=e59]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Company" [level=3] [ref=e63]
+            - navigation "Company navigation" [ref=e64]:
+              - link "Learn more about HVFLVSPOT" [ref=e65] [cursor=pointer]:
+                - /url: /about
+                - text: About Us
+              - link "Contact HVFLVSPOT support" [ref=e66] [cursor=pointer]:
+                - /url: /contact
+                - text: Contact
+              - link "View career opportunities" [ref=e67] [cursor=pointer]:
+                - /url: /careers
+                - text: Careers
+              - link "Read our blog" [ref=e68] [cursor=pointer]:
+                - /url: /blog
+                - text: Blog
+          - generic [ref=e69]:
+            - heading "Legal" [level=3] [ref=e70]
+            - navigation "Legal navigation" [ref=e71]:
+              - link "Read terms of service" [ref=e72] [cursor=pointer]:
+                - /url: /terms
+                - text: Terms of Service
+              - link "Read privacy policy" [ref=e73] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "Cookie policy" [ref=e74] [cursor=pointer]:
+                - /url: /cookies
+                - text: Cookie Policy
+              - link "Refund policy" [ref=e75] [cursor=pointer]:
+                - /url: /refunds
+                - text: Refund Policy
+        - generic [ref=e76]:
+          - heading "Stay Connected" [level=3] [ref=e77]
+          - generic [ref=e78]:
+            - link "Follow us on Twitter" [ref=e79] [cursor=pointer]:
+              - /url: "#"
+              - img "Twitter" [ref=e80]
+            - link "Follow us on Instagram" [ref=e82] [cursor=pointer]:
+              - /url: "#"
+              - img "Instagram" [ref=e83]
+            - link "Follow us on Facebook" [ref=e85] [cursor=pointer]:
+              - /url: "#"
+              - img "Facebook" [ref=e86]
+          - generic [ref=e88]:
+            - paragraph [ref=e89]: Get notified about new events
+            - generic [ref=e90]:
+              - textbox "Email address for newsletter" [ref=e91]:
+                - /placeholder: Enter your email
+              - button "Subscribe to newsletter" [ref=e92] [cursor=pointer]: Subscribe
+      - generic [ref=e94]:
+        - paragraph [ref=e96]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e98]:
+          - link "Get help and support" [ref=e99] [cursor=pointer]:
+            - /url: /help
+            - text: Help Center
+          - link "Accessibility information" [ref=e100] [cursor=pointer]:
+            - /url: /accessibility
+            - text: Accessibility
+          - link "View sitemap" [ref=e101] [cursor=pointer]:
+            - /url: /sitemap
+            - text: Sitemap
+```

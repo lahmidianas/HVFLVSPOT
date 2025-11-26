@@ -1,0 +1,36 @@
+{
+	"/": [
+		"src/routes/+page.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/about": [
+		"src/routes/+layout.ts"
+	],
+	"/dashboard": [
+		"src/routes/dashboard/+page.ts",
+		"src/routes/+layout.ts"
+	],
+	"/events": [
+		"src/routes/events/+page.ts",
+		"src/routes/+layout.ts"
+	],
+	"/events/[id]": [
+		"src/routes/events/[id]/+page.ts",
+		"src/routes/+layout.ts"
+	],
+	"/events/[id]/checkout": [
+		"src/routes/events/[id]/checkout/+page.ts",
+		"src/routes/+layout.ts"
+	],
+	"/login": [
+		"src/routes/+layout.ts"
+	],
+	"/search": [
+		"src/routes/+layout.ts"
+	],
+	"/wallet": [
+		"src/routes/wallet/+page.ts",
+		"src/routes/+layout.ts"
+	]
+}

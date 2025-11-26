@@ -1,0 +1,93 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation "Main navigation" [ref=e5]:
+      - generic [ref=e6]:
+        - link "HVFLVSPOT homepage" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - text: HVFLVSPOT
+        - generic [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "All Events" [ref=e11] [cursor=pointer]:
+            - /url: /events
+          - link "Events" [ref=e12] [cursor=pointer]:
+            - /url: /search
+          - link "Tickets" [ref=e13] [cursor=pointer]:
+            - /url: /wallet
+        - link "Sign Up" [ref=e15] [cursor=pointer]:
+          - /url: /login
+  - main:
+    - main
+  - contentinfo [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - link "HVFLVSPOT homepage" [ref=e20] [cursor=pointer]:
+            - /url: /
+            - text: HVFLVSPOT
+          - paragraph [ref=e21]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Company" [level=3] [ref=e25]
+            - navigation "Company navigation" [ref=e26]:
+              - link "Learn more about HVFLVSPOT" [ref=e27] [cursor=pointer]:
+                - /url: /about
+                - text: About Us
+              - link "Contact HVFLVSPOT support" [ref=e28] [cursor=pointer]:
+                - /url: /contact
+                - text: Contact
+              - link "View career opportunities" [ref=e29] [cursor=pointer]:
+                - /url: /careers
+                - text: Careers
+              - link "Read our blog" [ref=e30] [cursor=pointer]:
+                - /url: /blog
+                - text: Blog
+          - generic [ref=e31]:
+            - heading "Legal" [level=3] [ref=e32]
+            - navigation "Legal navigation" [ref=e33]:
+              - link "Read terms of service" [ref=e34] [cursor=pointer]:
+                - /url: /terms
+                - text: Terms of Service
+              - link "Read privacy policy" [ref=e35] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "Cookie policy" [ref=e36] [cursor=pointer]:
+                - /url: /cookies
+                - text: Cookie Policy
+              - link "Refund policy" [ref=e37] [cursor=pointer]:
+                - /url: /refunds
+                - text: Refund Policy
+        - generic [ref=e38]:
+          - heading "Stay Connected" [level=3] [ref=e39]
+          - generic [ref=e40]:
+            - link "Follow us on Twitter" [ref=e41] [cursor=pointer]:
+              - /url: "#"
+              - img "Twitter" [ref=e42]
+            - link "Follow us on Instagram" [ref=e44] [cursor=pointer]:
+              - /url: "#"
+              - img "Instagram" [ref=e45]
+            - link "Follow us on Facebook" [ref=e47] [cursor=pointer]:
+              - /url: "#"
+              - img "Facebook" [ref=e48]
+          - generic [ref=e50]:
+            - paragraph [ref=e51]: Get notified about new events
+            - generic [ref=e52]:
+              - textbox "Email address for newsletter" [ref=e53]:
+                - /placeholder: Enter your email
+              - button "Subscribe to newsletter" [ref=e54] [cursor=pointer]: Subscribe
+      - generic [ref=e56]:
+        - paragraph [ref=e58]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e60]:
+          - link "Get help and support" [ref=e61] [cursor=pointer]:
+            - /url: /help
+            - text: Help Center
+          - link "Accessibility information" [ref=e62] [cursor=pointer]:
+            - /url: /accessibility
+            - text: Accessibility
+          - link "View sitemap" [ref=e63] [cursor=pointer]:
+            - /url: /sitemap
+            - text: Sitemap
+```

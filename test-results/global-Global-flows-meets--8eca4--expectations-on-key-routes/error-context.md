@@ -1,0 +1,156 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation "Main navigation" [ref=e5]:
+      - generic [ref=e6]:
+        - link "HVFLVSPOT homepage" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - text: HVFLVSPOT
+        - generic [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "All Events" [ref=e11] [cursor=pointer]:
+            - /url: /events
+          - link "Events" [ref=e12] [cursor=pointer]:
+            - /url: /search
+          - link "Tickets" [ref=e13] [cursor=pointer]:
+            - /url: /wallet
+        - link "Sign Up" [ref=e15] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e16]:
+    - main [ref=e17]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - img [ref=e27]
+          - generic [ref=e29]: Discover Amazing Events
+        - heading "Find Your Next Adventure" [level=1] [ref=e30]:
+          - text: Find Your Next
+          - generic [ref=e31]: Adventure
+        - paragraph [ref=e32]: Discover and book tickets for the best concerts, festivals, and parties near you. Your perfect event is just a click away.
+        - generic [ref=e33]:
+          - link "Browse Events" [ref=e34] [cursor=pointer]:
+            - /url: /events
+            - generic [ref=e38]:
+              - img [ref=e39]
+              - text: Browse Events
+          - link "Learn More" [ref=e41] [cursor=pointer]:
+            - /url: /about
+            - text: Learn More
+            - img [ref=e42]
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - heading "Verified Events" [level=3] [ref=e49]
+            - paragraph [ref=e50]: All events are verified and secure
+          - generic [ref=e51]:
+            - img [ref=e53]
+            - heading "Instant Booking" [level=3] [ref=e55]
+            - paragraph [ref=e56]: Book tickets instantly with secure payment
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - heading "Personalized" [level=3] [ref=e61]
+            - paragraph [ref=e62]: Get recommendations based on your interests
+      - region "Explore by Category" [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - heading "Explore by Category" [level=2] [ref=e69]
+            - paragraph [ref=e70]: Discover amazing events across different categories and find your perfect experience
+          - list "Event categories" [ref=e71]:
+            - listitem "Browse Music events" [ref=e72] [cursor=pointer]:
+              - generic [ref=e74]:
+                - img "Music icon" [ref=e76]
+                - heading "Music" [level=3] [ref=e78]
+                - img "Explore category" [ref=e80]
+      - region "Upcoming Events" [ref=e84]:
+        - generic [ref=e85]:
+          - heading "Upcoming Events" [level=2] [ref=e86]
+          - article [ref=e88]:
+            - generic [ref=e89]:
+              - img "Global Music Fest" [ref=e90]
+              - generic [ref=e93]: $80.00
+            - generic [ref=e94]:
+              - heading "Global Music Fest" [level=3] [ref=e95]
+              - paragraph [ref=e96]: Sample description
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - img [ref=e100]
+                  - generic [ref=e102]: Mar 1, 2031 • 7:00 PM
+                - generic [ref=e103]:
+                  - img [ref=e105]
+                  - generic [ref=e108]: Nashville, TN
+              - button "Get Tickets" [ref=e109] [cursor=pointer]:
+                - generic [ref=e112]:
+                  - img [ref=e113]
+                  - text: Get Tickets
+  - contentinfo [ref=e116]:
+    - generic [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - link "HVFLVSPOT homepage" [ref=e120] [cursor=pointer]:
+            - /url: /
+            - text: HVFLVSPOT
+          - paragraph [ref=e121]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - heading "Company" [level=3] [ref=e125]
+            - navigation "Company navigation" [ref=e126]:
+              - link "Learn more about HVFLVSPOT" [ref=e127] [cursor=pointer]:
+                - /url: /about
+                - text: About Us
+              - link "Contact HVFLVSPOT support" [ref=e128] [cursor=pointer]:
+                - /url: /contact
+                - text: Contact
+              - link "View career opportunities" [ref=e129] [cursor=pointer]:
+                - /url: /careers
+                - text: Careers
+              - link "Read our blog" [ref=e130] [cursor=pointer]:
+                - /url: /blog
+                - text: Blog
+          - generic [ref=e131]:
+            - heading "Legal" [level=3] [ref=e132]
+            - navigation "Legal navigation" [ref=e133]:
+              - link "Read terms of service" [ref=e134] [cursor=pointer]:
+                - /url: /terms
+                - text: Terms of Service
+              - link "Read privacy policy" [ref=e135] [cursor=pointer]:
+                - /url: /privacy
+                - text: Privacy Policy
+              - link "Cookie policy" [ref=e136] [cursor=pointer]:
+                - /url: /cookies
+                - text: Cookie Policy
+              - link "Refund policy" [ref=e137] [cursor=pointer]:
+                - /url: /refunds
+                - text: Refund Policy
+        - generic [ref=e138]:
+          - heading "Stay Connected" [level=3] [ref=e139]
+          - generic [ref=e140]:
+            - link "Follow us on Twitter" [ref=e141] [cursor=pointer]:
+              - /url: "#"
+              - img "Twitter" [ref=e142]
+            - link "Follow us on Instagram" [ref=e144] [cursor=pointer]:
+              - /url: "#"
+              - img "Instagram" [ref=e145]
+            - link "Follow us on Facebook" [ref=e147] [cursor=pointer]:
+              - /url: "#"
+              - img "Facebook" [ref=e148]
+          - generic [ref=e150]:
+            - paragraph [ref=e151]: Get notified about new events
+            - generic [ref=e152]:
+              - textbox "Email address for newsletter" [ref=e153]:
+                - /placeholder: Enter your email
+              - button "Subscribe to newsletter" [ref=e154] [cursor=pointer]: Subscribe
+      - generic [ref=e156]:
+        - paragraph [ref=e158]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e160]:
+          - link "Get help and support" [ref=e161] [cursor=pointer]:
+            - /url: /help
+            - text: Help Center
+          - link "Accessibility information" [ref=e162] [cursor=pointer]:
+            - /url: /accessibility
+            - text: Accessibility
+          - link "View sitemap" [ref=e163] [cursor=pointer]:
+            - /url: /sitemap
+            - text: Sitemap
+```

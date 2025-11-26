@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2024-01-09T15:21:01Z",
+  "description": "Initial version with dual users table setup (auth.users + public.users)",
+  "critical_files": [
+    "src/services/authService.js",
+    "src/services/paymentService.js",
+    "src/services/notificationService.js",
+    "src/services/ticketing/TicketingService.js",
+    "src/services/event/EventSearchService.js",
+    "src/services/event/EventRecommendationService.js"
+  ],
+  "database_migrations": [
+    "20250106215751_azure_harbor.sql",
+    "20250107125909_copper_mountain.sql",
+    "20250107135458_fierce_mountain.sql",
+    "20250107140452_rustic_temple.sql",
+    "20250107141720_wandering_delta.sql",
+    "20250107142540_cool_leaf.sql",
+    "20250107213204_jolly_mouse.sql",
+    "20250107213321_light_oasis.sql",
+    "20250107214037_late_trail.sql",
+    "20250107214354_mellow_mountain.sql",
+    "20250107220745_teal_shore.sql",
+    "20250107221731_warm_art.sql",
+    "20250109015331_wispy_spark.sql",
+    "20250109024555_jade_fire.sql",
+    "20250109113456_snowy_lab.sql",
+    "20250109122843_falling_mud.sql",
+    "20250109145356_shiny_river.sql",
+    "20250109150444_snowy_hall.sql",
+    "20250109150715_soft_garden.sql",
+    "20250109150936_sunny_bonus.sql",
+    "20250109151508_spring_bird.sql",
+    "20250109152101_quiet_smoke.sql"
+  ],
+  "schema_state": {
+    "users_table": "public.users",
+    "auth_integration": "auth.users",
+    "foreign_keys": [
+      "transactions.user_id -> users.id",
+      "notifications.user_id -> users.id",
+      "bookings.user_id -> users.id",
+      "events.organizer_id -> users.id"
+    ]
+  }
+}
