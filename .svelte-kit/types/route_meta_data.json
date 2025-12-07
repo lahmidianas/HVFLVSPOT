@@ -1,36 +1,39 @@
 {
 	"/": [
 		"src/routes/+page.ts",
-		"src/routes/+layout.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts",
+		"src/routes/+layout.server.ts"
 	],
 	"/about": [
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	],
 	"/dashboard": [
-		"src/routes/dashboard/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/dashboard/+page.server.ts",
+		"src/routes/+layout.server.ts"
 	],
 	"/events": [
 		"src/routes/events/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	],
 	"/events/[id]": [
 		"src/routes/events/[id]/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	],
 	"/events/[id]/checkout": [
 		"src/routes/events/[id]/checkout/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	],
 	"/login": [
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
+	],
+	"/profile": [
+		"src/routes/+layout.server.ts"
 	],
 	"/search": [
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	],
 	"/wallet": [
 		"src/routes/wallet/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts"
 	]
 }

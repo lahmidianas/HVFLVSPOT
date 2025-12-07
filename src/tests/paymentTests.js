@@ -1,7 +1,7 @@
-import { PaymentService } from '../services/paymentService.js';
+﻿import { PaymentService } from '../services/paymentService.js';
 import { PaymentStatus, TransactionType } from '../utils/paymentUtils.js';
 import { setupTestData, cleanupTestData, assertSuccess, assertError, TEST_USER_ID } from './testUtils.js';
-import { supabase, supabaseAdmin } from '../lib/supabase.js';
+import { supabase, supabaseAdmin } from '../lib/server/supabaseAdmin.js';
 
 // Use admin client for test queries to bypass RLS
 const testClient = supabaseAdmin || supabase;
@@ -11,20 +11,20 @@ const paymentService = new PaymentService();
 // Enhanced logging utility
 const logStep = (testName, step, data = null) => {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] 🧪 ${testName} - ${step}`);
+  console.log(`[${timestamp}] ðŸ§ª ${testName} - ${step}`);
   if (data) {
-    console.log(`[${timestamp}] 📊 Data:`, JSON.stringify(data, null, 2));
+    console.log(`[${timestamp}] ðŸ“Š Data:`, JSON.stringify(data, null, 2));
   }
 };
 
 const logTestStart = (testName) => {
   console.log('\n' + '='.repeat(80));
-  console.log(`🚀 STARTING TEST: ${testName}`);
+  console.log(`ðŸš€ STARTING TEST: ${testName}`);
   console.log('='.repeat(80));
 };
 
 const logTestEnd = (testName, success) => {
-  const status = success ? '✅ PASSED' : '❌ FAILED';
+  const status = success ? 'âœ… PASSED' : 'âŒ FAILED';
   console.log('='.repeat(80));
   console.log(`${status}: ${testName}`);
   console.log('='.repeat(80) + '\n');
@@ -32,9 +32,9 @@ const logTestEnd = (testName, success) => {
 
 const logError = (testName, step, error) => {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ❌ ${testName} - ${step} FAILED`);
-  console.log(`[${timestamp}] 🔥 Error:`, error.message);
-  console.log(`[${timestamp}] 📚 Stack:`, error.stack);
+  console.log(`[${timestamp}] âŒ ${testName} - ${step} FAILED`);
+  console.log(`[${timestamp}] ðŸ”¥ Error:`, error.message);
+  console.log(`[${timestamp}] ðŸ“š Stack:`, error.stack);
 };
 
 async function testPaymentProcessing() {
@@ -686,9 +686,9 @@ async function testTransactionFilters() {
 }
 
 export async function runPaymentTests() {
-  console.log('\n' + '🏦'.repeat(20));
-  console.log('🏦 STARTING PAYMENT SERVICE TEST SUITE 🏦');
-  console.log('🏦'.repeat(20) + '\n');
+  console.log('\n' + 'ðŸ¦'.repeat(20));
+  console.log('ðŸ¦ STARTING PAYMENT SERVICE TEST SUITE ðŸ¦');
+  console.log('ðŸ¦'.repeat(20) + '\n');
 
   const testStartTime = Date.now();
   let testResults = [];
@@ -732,18 +732,18 @@ export async function runPaymentTests() {
   const failedTests = totalTests - passedTests;
   
   // Final summary
-  console.log('\n' + '📊'.repeat(20));
-  console.log('📊 PAYMENT TEST SUITE SUMMARY 📊');
-  console.log('📊'.repeat(20));
-  console.log(`⏱️  Total execution time: ${totalTestTime}ms`);
-  console.log(`✅ Tests passed: ${passedTests}/${totalTests}`);
-  console.log(`❌ Tests failed: ${failedTests}/${totalTests}`);
-  console.log(`📈 Success rate: ${((passedTests/totalTests) * 100).toFixed(1)}%`);
-  console.log('📊'.repeat(20) + '\n');
+  console.log('\n' + 'ðŸ“Š'.repeat(20));
+  console.log('ðŸ“Š PAYMENT TEST SUITE SUMMARY ðŸ“Š');
+  console.log('ðŸ“Š'.repeat(20));
+  console.log(`â±ï¸  Total execution time: ${totalTestTime}ms`);
+  console.log(`âœ… Tests passed: ${passedTests}/${totalTests}`);
+  console.log(`âŒ Tests failed: ${failedTests}/${totalTests}`);
+  console.log(`ðŸ“ˆ Success rate: ${((passedTests/totalTests) * 100).toFixed(1)}%`);
+  console.log('ðŸ“Š'.repeat(20) + '\n');
 
   if (failedTests > 0) {
-    console.log('❌ Some tests failed. Please review the detailed logs above.');
+    console.log('âŒ Some tests failed. Please review the detailed logs above.');
   } else {
-    console.log('🎉 All payment tests passed successfully!');
+    console.log('ðŸŽ‰ All payment tests passed successfully!');
   }
 }

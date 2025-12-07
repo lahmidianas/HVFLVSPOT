@@ -1,6 +1,6 @@
-import { TicketingService } from '../services/ticketing/TicketingService.js';
+﻿import { TicketingService } from '../services/ticketing/TicketingService.js';
 import { setupTestData, cleanupTestData, assertSuccess, assertError, TEST_USER_ID, TEST_EVENT_ID, TEST_TICKET_ID } from './testUtils.js';
-import { supabase, supabaseAdmin } from '../lib/supabase.js';
+import { supabase, supabaseAdmin } from '../lib/server/supabaseAdmin.js';
 
 // Utility functions for test reliability
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -11,11 +11,11 @@ const retryOperation = async (operation, maxRetries = 5, baseDelayMs = 1000) => 
       return await operation();
     } catch (error) {
       if (attempt === maxRetries) {
-        console.log(`❌ Operation failed after ${maxRetries} attempts:`, error.message);
+        console.log(`âŒ Operation failed after ${maxRetries} attempts:`, error.message);
         throw error;
       }
       const delayMs = baseDelayMs * Math.pow(2, attempt - 1); // Exponential backoff
-      console.log(`⚠️  Attempt ${attempt}/${maxRetries} failed, retrying in ${delayMs}ms...`);
+      console.log(`âš ï¸  Attempt ${attempt}/${maxRetries} failed, retrying in ${delayMs}ms...`);
       console.log(`   Error: ${error.message}`);
       await delay(delayMs);
     }
@@ -32,7 +32,7 @@ const checkDatabaseConnection = async () => {
     if (error) throw error;
     return true;
   } catch (error) {
-    console.log('❌ Database connection check failed:', error.message);
+    console.log('âŒ Database connection check failed:', error.message);
     return false;
   }
 };
@@ -94,20 +94,20 @@ const ticketingService = new TicketingService();
 // Enhanced logging utility
 const logStep = (testName, step, data = null) => {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] 🎫 ${testName} - ${step}`);
+  console.log(`[${timestamp}] ðŸŽ« ${testName} - ${step}`);
   if (data) {
-    console.log(`[${timestamp}] 📊 Data:`, JSON.stringify(data, null, 2));
+    console.log(`[${timestamp}] ðŸ“Š Data:`, JSON.stringify(data, null, 2));
   }
 };
 
 const logTestStart = (testName) => {
   console.log('\n' + '='.repeat(80));
-  console.log(`🚀 STARTING TEST: ${testName}`);
+  console.log(`ðŸš€ STARTING TEST: ${testName}`);
   console.log('='.repeat(80));
 };
 
 const logTestEnd = (testName, success) => {
-  const status = success ? '✅ PASSED' : '❌ FAILED';
+  const status = success ? 'âœ… PASSED' : 'âŒ FAILED';
   console.log('='.repeat(80));
   console.log(`${status}: ${testName}`);
   console.log('='.repeat(80) + '\n');
@@ -115,9 +115,9 @@ const logTestEnd = (testName, success) => {
 
 const logError = (testName, step, error) => {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ❌ ${testName} - ${step} FAILED`);
-  console.log(`[${timestamp}] 🔥 Error:`, error.message);
-  console.log(`[${timestamp}] 📚 Stack:`, error.stack);
+  console.log(`[${timestamp}] âŒ ${testName} - ${step} FAILED`);
+  console.log(`[${timestamp}] ðŸ”¥ Error:`, error.message);
+  console.log(`[${timestamp}] ðŸ“š Stack:`, error.stack);
 };
 
 async function testTicketPurchase() {
@@ -925,9 +925,9 @@ async function testInvalidUserTickets() {
 }
 
 export async function runTicketingTests() {
-  console.log('\n' + '🎫'.repeat(20));
-  console.log('🎫 STARTING TICKETING SERVICE TEST SUITE 🎫');
-  console.log('🎫'.repeat(20) + '\n');
+  console.log('\n' + 'ðŸŽ«'.repeat(20));
+  console.log('ðŸŽ« STARTING TICKETING SERVICE TEST SUITE ðŸŽ«');
+  console.log('ðŸŽ«'.repeat(20) + '\n');
 
   const testStartTime = Date.now();
   let testResults = [];
@@ -1005,18 +1005,18 @@ export async function runTicketingTests() {
   const failedTests = totalTests - passedTests;
   
   // Final summary
-  console.log('\n' + '📊'.repeat(20));
-  console.log('📊 TICKETING TEST SUITE SUMMARY 📊');
-  console.log('📊'.repeat(20));
-  console.log(`⏱️  Total execution time: ${totalTestTime}ms`);
-  console.log(`✅ Tests passed: ${passedTests}/${totalTests}`);
-  console.log(`❌ Tests failed: ${failedTests}/${totalTests}`);
-  console.log(`📈 Success rate: ${((passedTests/totalTests) * 100).toFixed(1)}%`);
-  console.log('📊'.repeat(20) + '\n');
+  console.log('\n' + 'ðŸ“Š'.repeat(20));
+  console.log('ðŸ“Š TICKETING TEST SUITE SUMMARY ðŸ“Š');
+  console.log('ðŸ“Š'.repeat(20));
+  console.log(`â±ï¸  Total execution time: ${totalTestTime}ms`);
+  console.log(`âœ… Tests passed: ${passedTests}/${totalTests}`);
+  console.log(`âŒ Tests failed: ${failedTests}/${totalTests}`);
+  console.log(`ðŸ“ˆ Success rate: ${((passedTests/totalTests) * 100).toFixed(1)}%`);
+  console.log('ðŸ“Š'.repeat(20) + '\n');
 
   if (failedTests > 0) {
-    console.log('❌ Some ticketing tests failed. Please review the detailed logs above.');
+    console.log('âŒ Some ticketing tests failed. Please review the detailed logs above.');
   } else {
-    console.log('🎉 All ticketing tests passed successfully!');
+    console.log('ðŸŽ‰ All ticketing tests passed successfully!');
   }
 }

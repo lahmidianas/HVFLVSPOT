@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# HVFLVSPOT (SvelteKit + Supabase)
 
-## Getting Started
+Production app runs on **SvelteKit** (Vite, TypeScript, Tailwind) with **Supabase** for auth/data. Any old Next.js scaffolding is deprecated—only the SvelteKit code under `src/` is used.
 
-First, run the development server:
+## Project Structure
+- `src/routes/` – SvelteKit routes (pages and server endpoints)
+- `src/lib/components/` – UI components (Svelte)
+- `src/lib/stores/session.ts` – shared client session store
+- `src/lib/supabase.ts` – browser Supabase client (public URL + anon key)
+- `src/hooks.server.ts` – per-request Supabase server client (auth cookies)
+- `src/routes/dashboard/` – admin dashboard (events CRUD)
+- `tests/e2e/` – Playwright end-to-end tests
+- `src/lib/components/**/__tests__/` – Vitest component tests
 
+## Environment
+Copy `.env.example` to `.env` and set:
+```
+PUBLIC_SUPABASE_URL=...              # required
+PUBLIC_SUPABASE_ANON_KEY=...         # required (same as VITE_SUPABASE_ANON_KEY if used)
+SUPABASE_SERVICE_ROLE_KEY=...        # server-only tasks (never exposed to client)
+PUBLIC_API_BASE=http://localhost:3000
+```
+Do **not** import `$env/static/private` from client code; client uses `$env/static/public` only.
+
+## Auth Flow
+- Server: `hooks.server.ts` builds a Supabase server client from auth cookies and exposes `locals.supabase` and `locals.getSession`.
+- Client: `src/lib/supabase.ts` exports the browser client for UI and the session store.
+- Shared session: `src/lib/stores/session.ts` holds the current session for header/profile.
+
+## Admin Access (/dashboard)
+- Admin is identified by email: **`anaslahmidi123@gmail.com`**.
+- Server load and actions resolve the email via `locals.supabase.auth.getSession()` (fallback to `locals.getSession()` / `auth.getUser()`), normalize it, and gate admin features.
+- If email matches admin ? full CRUD for events; otherwise the page renders an “Access denied” section.
+
+## Run the App
 ```bash
-npm run dev 
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun run dev
+npm install
+npm run dev    # start SvelteKit dev server (default http://localhost:5173)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tests
+- Unit/component (Vitest + Testing Library):
+  ```bash
+  npm run test:unit
+  ```
+  Vitest is configured with jsdom and ignores Playwright specs.
+- E2E (Playwright):
+  ```bash
+  npx playwright test
+  ```
+  Ensure the dev server is running (set baseURL in `playwright.config.ts`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin Dashboard Usage
+1) Log in with the admin email above.
+2) Visit `/dashboard` to create, edit, or delete events (tickets nested in event query).
+3) Non-admin or logged-out users will see an “Access denied” message but no redirect.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Notes
+- Header/profile use the shared session store and Supabase client; no manual cookie writes.
+- Keep Supabase keys consistent across client/server; use the anon key client-side only.

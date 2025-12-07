@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../lib/supabase.js';
+﻿import { supabase, supabaseAdmin } from '../lib/server/supabaseAdmin.js';
 import {
   PaymentStatus,
   TransactionType,

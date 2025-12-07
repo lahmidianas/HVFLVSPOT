@@ -1,14 +1,58 @@
-<script lang="ts">
-  import { supabase } from '$lib/supabase';
+﻿<script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
   import { page } from '$app/stores';
+  import { supabase } from '$lib/supabase';
+  import { initSession, sessionStore } from '$lib/stores/session';
   import type { Session } from '@supabase/supabase-js';
 
-  export let session: Session | null;
+  type HeaderData = { session: Session | null };
+  export let data: HeaderData;
 
   let mobileMenuOpen = false;
+  let displayName = '';
+  let avatarInitial = 'U';
+  let currentSession: Session | null = data?.session ?? null;
+  let unsubscribeSession: (() => void) | undefined;
+  let isAdmin = false;
+
+  onMount(() => {
+    initSession(data?.session ?? null);
+    unsubscribeSession = sessionStore.subscribe(async (value) => {
+      currentSession = value;
+      await refreshRole();
+    });
+  });
+
+  onDestroy(() => {
+    if (unsubscribeSession) unsubscribeSession();
+  });
+
+  $: {
+    const user = currentSession?.user;
+    displayName = user
+      ? (user.user_metadata?.full_name as string) ||
+        (user.user_metadata?.name as string) ||
+        (user.email ? user.email.split('@')[0] : '')
+      : '';
+    avatarInitial = displayName ? displayName.trim()[0]?.toUpperCase() : 'U';
+  }
+
+  async function refreshRole() {
+    if (!currentSession?.user?.id) {
+      isAdmin = false;
+      return;
+    }
+    const { data } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', currentSession.user.id)
+      .single();
+    isAdmin = data?.role === 'admin';
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
+    currentSession = null;
     window.location.href = '/';
   }
 
@@ -20,7 +64,6 @@
     mobileMenuOpen = false;
   }
 
-  // Check if current route is active
   function isActiveRoute(path: string): boolean {
     return $page.url?.pathname === path || false;
   }
@@ -29,7 +72,6 @@
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
   <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
     <div class="flex h-16 items-center justify-between">
-      <!-- Mobile menu button -->
       <div class="flex items-center lg:hidden">
         <button
           type="button"
@@ -52,10 +94,9 @@
         </button>
       </div>
 
-      <!-- Centered Logo -->
       <div class="flex-1 flex justify-center lg:justify-center">
-        <a 
-          href="/" 
+        <a
+          href="/"
           class="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-md px-2 py-1"
           aria-label="HVFLVSPOT homepage"
         >
@@ -63,70 +104,57 @@
         </a>
       </div>
 
-      <!-- Desktop Navigation -->
       <div class="hidden lg:flex lg:items-center lg:space-x-8">
-        <a 
-          href="/" 
+        <a
+          href="/"
           class="nav-link {isActiveRoute('/') ? 'nav-link-active' : ''}"
           aria-current={isActiveRoute('/') ? 'page' : undefined}
         >
           Home
         </a>
-        <a 
-          href="/events" 
+        <a
+          href="/events"
           class="nav-link {isActiveRoute('/events') ? 'nav-link-active' : ''}"
           aria-current={isActiveRoute('/events') ? 'page' : undefined}
         >
           All Events
         </a>
-        <a 
-          href="/search" 
+        <a
+          href="/search"
           class="nav-link {isActiveRoute('/search') ? 'nav-link-active' : ''}"
           aria-current={isActiveRoute('/search') ? 'page' : undefined}
         >
-          Events
+          Search
         </a>
-        {#if session?.user}
-          <a 
-            href="/wallet" 
-            class="nav-link {isActiveRoute('/wallet') ? 'nav-link-active' : ''}"
-            aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
-          >
-            Tickets
-          </a>
-          <a 
-            href="/dashboard" 
+        <a
+          href="/wallet"
+          class="nav-link {isActiveRoute('/wallet') ? 'nav-link-active' : ''}"
+          aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
+        >
+          Tickets
+        </a>
+        {#if isAdmin}
+          <a
+            href="/dashboard"
             class="nav-link {isActiveRoute('/dashboard') ? 'nav-link-active' : ''}"
             aria-current={isActiveRoute('/dashboard') ? 'page' : undefined}
           >
             Dashboard
           </a>
-        {:else}
-          <a 
-            href="/wallet" 
-            class="nav-link {isActiveRoute('/wallet') ? 'nav-link-active' : ''}"
-            aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
-          >
-            Tickets
-          </a>
         {/if}
       </div>
 
-      <!-- Auth Section -->
       <div class="flex items-center space-x-4">
-        {#if session?.user}
-          <!-- User Menu -->
-          <div class="hidden lg:flex lg:items-center lg:space-x-4">
-            <span class="text-sm text-gray-600">
-              {session.user.email}
+        {#if currentSession?.user}
+          <a
+            href="/profile"
+            class="hidden lg:inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-sm font-medium rounded-md text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
+              {avatarInitial}
             </span>
-            <button
-              on:click={signOut}
-              class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-md px-2 py-1"
-            >
-              Sign Out
-            </button>
-          </div>
+            <span class="max-w-[140px] truncate">{displayName || 'Profile'}</span>
+          </a>
         {:else}
           <a
             href="/login"
@@ -138,7 +166,6 @@
       </div>
     </div>
 
-    <!-- Mobile menu -->
     {#if mobileMenuOpen}
       <div class="lg:hidden" id="mobile-menu">
         <div class="space-y-1 pb-3 pt-2 border-t border-gray-200 bg-white">
@@ -174,8 +201,8 @@
           >
             Tickets
           </a>
-          
-          {#if session?.user}
+
+          {#if isAdmin}
             <a
               href="/dashboard"
               on:click={closeMobileMenu}
@@ -184,9 +211,21 @@
             >
               Dashboard
             </a>
+          {/if}
+
+          {#if currentSession?.user}
             <div class="border-t border-gray-200 pt-4 pb-3">
-              <div class="px-4">
-                <div class="text-base font-medium text-gray-800">{session.user.email}</div>
+              <div class="px-2">
+                <a
+                  href="/profile"
+                  on:click={closeMobileMenu}
+                  class="flex items-center gap-3 px-3 py-2 rounded-md text-base font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
+                    {avatarInitial}
+                  </span>
+                  <span class="truncate">{displayName || 'Profile'}</span>
+                </a>
               </div>
               <div class="mt-3 px-2">
                 <button
@@ -255,7 +294,6 @@
     @apply text-indigo-600 bg-indigo-50;
   }
 
-  /* Backdrop blur fallback for older browsers */
   @supports not (backdrop-filter: blur(12px)) {
     header {
       background-color: white;

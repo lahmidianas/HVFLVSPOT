@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../lib/supabase.js';
+﻿import { supabase, supabaseAdmin } from '../lib/server/supabaseAdmin.js';
 import { hashPassword } from '../utils/auth.js';
 import crypto from 'crypto';
 
@@ -417,12 +417,12 @@ export const setupTestData = async () => {
 };
 
 export const assertSuccess = (name) => {
-  console.log(`✅ ${name}: Passed`);
+  console.log(`âœ… ${name}: Passed`);
   return true;
 };
 
 export const assertError = (name, error) => {
-  console.error(`❌ ${name}: Failed - ${error.message}`);
+  console.error(`âŒ ${name}: Failed - ${error.message}`);
   return false;
 };
 

@@ -30,14 +30,12 @@
             - img
           - textbox "Search events by keyword" [ref=e25]:
             - /placeholder: Search for events, artists, venues...
-            - text: festival
         - search "Event search filters" [ref=e26]:
           - generic [ref=e27]:
             - generic [ref=e28]:
               - generic [ref=e29]: Category
               - combobox "Category" [ref=e30]:
                 - option "All Categories" [selected]
-                - option "Festival"
               - generic [ref=e31]: Filter events by category
             - generic [ref=e32]:
               - generic [ref=e33]: City or Venue
@@ -54,101 +52,85 @@
               - generic [ref=e43]:
                 - textbox "Start date" [ref=e44]
                 - textbox "End date" [ref=e45]
-            - button "Clear all search filters" [ref=e47] [cursor=pointer]: Clear Filters
       - region "Search Results" [ref=e49]:
         - heading "Search Results" [level=2] [ref=e50]
-        - generic [ref=e51]:
-          - generic [ref=e52]:
-            - status [ref=e53]: 1 event found
-            - generic [ref=e54]:
-              - generic [ref=e55]: "Filtered by:"
-              - generic [ref=e56]: "\"festival\""
-          - button "Clear all filters" [ref=e57] [cursor=pointer]
-        - article [ref=e59]:
-          - generic [ref=e60]:
-            - img "City Lights Festival" [ref=e61]
-            - generic [ref=e64]: $95.00
-          - generic [ref=e65]:
-            - heading "City Lights Festival" [level=3] [ref=e66]
-            - paragraph [ref=e67]: Multi-stage electronic festival
-            - generic [ref=e68]:
-              - generic [ref=e69]:
-                - img [ref=e71]
-                - generic [ref=e73]: Sep 1, 2030 • 8:00 PM
-              - generic [ref=e74]:
-                - img [ref=e76]
-                - generic [ref=e79]: Denver, CO
-            - button "Get Tickets" [ref=e80] [cursor=pointer]:
-              - generic [ref=e83]:
-                - img [ref=e84]
-                - text: Get Tickets
-  - contentinfo [ref=e87]:
-    - generic [ref=e88]:
-      - generic [ref=e89]:
-        - generic [ref=e90]:
-          - link "HVFLVSPOT homepage" [ref=e91] [cursor=pointer]:
+        - generic [ref=e52]:
+          - img [ref=e54]
+          - heading "No Events Found" [level=3] [ref=e56]
+          - paragraph [ref=e57]: There are no events available right now. Check back soon for exciting new events!
+          - generic [ref=e58]:
+            - button "Refresh Events" [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+              - text: Refresh Events
+            - link "← Back to Homepage" [ref=e63] [cursor=pointer]:
+              - /url: /
+  - contentinfo [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - link "HVFLVSPOT homepage" [ref=e68] [cursor=pointer]:
             - /url: /
             - text: HVFLVSPOT
-          - paragraph [ref=e92]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
-        - generic [ref=e94]:
-          - generic [ref=e95]:
-            - heading "Company" [level=3] [ref=e96]
-            - navigation "Company navigation" [ref=e97]:
-              - link "Learn more about HVFLVSPOT" [ref=e98] [cursor=pointer]:
+          - paragraph [ref=e69]: Discover and book tickets for the best events near you. Your perfect experience is just a click away.
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - heading "Company" [level=3] [ref=e73]
+            - navigation "Company navigation" [ref=e74]:
+              - link "Learn more about HVFLVSPOT" [ref=e75] [cursor=pointer]:
                 - /url: /about
                 - text: About Us
-              - link "Contact HVFLVSPOT support" [ref=e99] [cursor=pointer]:
+              - link "Contact HVFLVSPOT support" [ref=e76] [cursor=pointer]:
                 - /url: /contact
                 - text: Contact
-              - link "View career opportunities" [ref=e100] [cursor=pointer]:
+              - link "View career opportunities" [ref=e77] [cursor=pointer]:
                 - /url: /careers
                 - text: Careers
-              - link "Read our blog" [ref=e101] [cursor=pointer]:
+              - link "Read our blog" [ref=e78] [cursor=pointer]:
                 - /url: /blog
                 - text: Blog
-          - generic [ref=e102]:
-            - heading "Legal" [level=3] [ref=e103]
-            - navigation "Legal navigation" [ref=e104]:
-              - link "Read terms of service" [ref=e105] [cursor=pointer]:
+          - generic [ref=e79]:
+            - heading "Legal" [level=3] [ref=e80]
+            - navigation "Legal navigation" [ref=e81]:
+              - link "Read terms of service" [ref=e82] [cursor=pointer]:
                 - /url: /terms
                 - text: Terms of Service
-              - link "Read privacy policy" [ref=e106] [cursor=pointer]:
+              - link "Read privacy policy" [ref=e83] [cursor=pointer]:
                 - /url: /privacy
                 - text: Privacy Policy
-              - link "Cookie policy" [ref=e107] [cursor=pointer]:
+              - link "Cookie policy" [ref=e84] [cursor=pointer]:
                 - /url: /cookies
                 - text: Cookie Policy
-              - link "Refund policy" [ref=e108] [cursor=pointer]:
+              - link "Refund policy" [ref=e85] [cursor=pointer]:
                 - /url: /refunds
                 - text: Refund Policy
-        - generic [ref=e109]:
-          - heading "Stay Connected" [level=3] [ref=e110]
-          - generic [ref=e111]:
-            - link "Follow us on Twitter" [ref=e112] [cursor=pointer]:
+        - generic [ref=e86]:
+          - heading "Stay Connected" [level=3] [ref=e87]
+          - generic [ref=e88]:
+            - link "Follow us on Twitter" [ref=e89] [cursor=pointer]:
               - /url: "#"
-              - img "Twitter" [ref=e113]
-            - link "Follow us on Instagram" [ref=e115] [cursor=pointer]:
+              - img "Twitter" [ref=e90]
+            - link "Follow us on Instagram" [ref=e92] [cursor=pointer]:
               - /url: "#"
-              - img "Instagram" [ref=e116]
-            - link "Follow us on Facebook" [ref=e118] [cursor=pointer]:
+              - img "Instagram" [ref=e93]
+            - link "Follow us on Facebook" [ref=e95] [cursor=pointer]:
               - /url: "#"
-              - img "Facebook" [ref=e119]
-          - generic [ref=e121]:
-            - paragraph [ref=e122]: Get notified about new events
-            - generic [ref=e123]:
-              - textbox "Email address for newsletter" [ref=e124]:
+              - img "Facebook" [ref=e96]
+          - generic [ref=e98]:
+            - paragraph [ref=e99]: Get notified about new events
+            - generic [ref=e100]:
+              - textbox "Email address for newsletter" [ref=e101]:
                 - /placeholder: Enter your email
-              - button "Subscribe to newsletter" [ref=e125] [cursor=pointer]: Subscribe
-      - generic [ref=e127]:
-        - paragraph [ref=e129]: © 2025 HVFLVSPOT. All rights reserved.
-        - navigation "Footer utility navigation" [ref=e131]:
-          - link "Get help and support" [ref=e132] [cursor=pointer]:
+              - button "Subscribe to newsletter" [ref=e102] [cursor=pointer]: Subscribe
+      - generic [ref=e104]:
+        - paragraph [ref=e106]: © 2025 HVFLVSPOT. All rights reserved.
+        - navigation "Footer utility navigation" [ref=e108]:
+          - link "Get help and support" [ref=e109] [cursor=pointer]:
             - /url: /help
             - text: Help Center
-          - link "Accessibility information" [ref=e133] [cursor=pointer]:
+          - link "Accessibility information" [ref=e110] [cursor=pointer]:
             - /url: /accessibility
             - text: Accessibility
-          - link "View sitemap" [ref=e134] [cursor=pointer]:
+          - link "View sitemap" [ref=e111] [cursor=pointer]:
             - /url: /sitemap
             - text: Sitemap
 ```

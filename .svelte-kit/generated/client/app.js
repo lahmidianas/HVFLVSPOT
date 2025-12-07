@@ -11,21 +11,23 @@ export const nodes = [
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
 	() => import('./nodes/9'),
-	() => import('./nodes/10')
+	() => import('./nodes/10'),
+	() => import('./nodes/11')
 ];
 
-export const server_loads = [];
+export const server_loads = [0];
 
 export const dictionary = {
 		"/": [2],
 		"/about": [3],
-		"/dashboard": [4],
+		"/dashboard": [~4],
 		"/events": [5],
 		"/events/[id]": [6],
 		"/events/[id]/checkout": [7],
 		"/login": [8],
-		"/search": [9],
-		"/wallet": [10]
+		"/profile": [9],
+		"/search": [10],
+		"/wallet": [11]
 	};
 
 export const hooks = {

@@ -1,5 +1,5 @@
-import { supabase } from '../../lib/supabase.js';
-import { supabaseAdmin } from '../../lib/supabase.js';
+﻿import { supabase } from '../../lib/server/supabaseAdmin.js';
+import { supabaseAdmin } from '../../lib/server/supabaseAdmin.js';
 import { NotificationChannel } from '../../utils/notification/constants.js';
 
 export class PreferencesService {

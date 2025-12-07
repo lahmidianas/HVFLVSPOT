@@ -1,104 +1,163 @@
-<script lang="ts">
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { supabase } from '$lib/supabase';
-  import UserTickets from '$lib/components/user/UserTickets.svelte';
-  import NotificationSettings from '$lib/components/user/NotificationSettings.svelte';
-  import EventManagement from '$lib/components/organizer/EventManagement.svelte';
-  import type { PageData } from './$types';
-
-  export let data: PageData;
-
-  let activeTab = 'tickets';
-  let userRole = 'User';
-
-  onMount(async () => {
-    // Redirect if not authenticated
-    if (!data.session) {
-      goto(`/login?redirect=${encodeURIComponent($page.url.pathname)}`);
-      return;
-    }
-
-    // Get user role from our users table (reference data, can read directly)
-    try {
-      const { data: userData } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', data.session.user.id)
-        .single();
-      
-      if (userData) {
-        userRole = userData.role;
-      }
-    } catch (err) {
-      console.error('Failed to get user role:', err);
-      // If we can't get user role, it might be an auth issue
-      if (err.message?.includes('JWT') || err.message?.includes('expired')) {
-        goto(`/login?redirect=${encodeURIComponent($page.url.pathname)}`);
-        return;
-      }
-    }
-  });
-
-  function setActiveTab(tab: string) {
-    activeTab = tab;
-  }
+﻿<script lang="ts">
+  export let data;
+  const { isAdmin, events = [], tickets = [] } = data;
 </script>
 
 <svelte:head>
-  <title>Dashboard - HVFLVSPOT</title>
+  <title>Admin - Events</title>
 </svelte:head>
 
-{#if data.session}
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Dashboard Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-      <p class="text-gray-600">Welcome back, {data.session.user.email}</p>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="border-b border-gray-200 mb-8">
-      <nav class="-mb-px flex space-x-8">
-        <button
-          on:click={() => setActiveTab('tickets')}
-          class="py-2 px-1 border-b-2 font-medium text-sm {activeTab === 'tickets' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-        >
-          My Tickets
-        </button>
-        
-        <button
-          on:click={() => setActiveTab('settings')}
-          class="py-2 px-1 border-b-2 font-medium text-sm {activeTab === 'settings' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-        >
-          Notification Settings
-        </button>
-
-        {#if userRole === 'Organizer'}
-          <button
-            on:click={() => setActiveTab('events')}
-            class="py-2 px-1 border-b-2 font-medium text-sm {activeTab === 'events' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-          >
-            Manage Events
-          </button>
-        {/if}
-      </nav>
-    </div>
-
-    <!-- Tab Content -->
+{#if isAdmin}
+  <div class="max-w-6xl mx-auto px-4 py-10 space-y-8">
     <div>
-      {#if activeTab === 'tickets'}
-        <UserTickets />
-      {:else if activeTab === 'settings'}
-        <NotificationSettings />
-      {:else if activeTab === 'events' && userRole === 'Organizer'}
-        <EventManagement />
-      {/if}
+      <h1 class="text-3xl font-bold text-gray-900">Admin - Events</h1>
+      <p class="text-gray-600">Create, edit, and delete events.</p>
     </div>
+
+    <section class="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Create Event</h2>
+      <form method="POST" action="?/createEvent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">Title</span>
+          <input name="title" class="input" required />
+        </label>
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">Location</span>
+          <input name="location" class="input" required />
+        </label>
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">Start Date</span>
+          <input type="datetime-local" name="start_date" class="input" required />
+        </label>
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">End Date</span>
+          <input type="datetime-local" name="end_date" class="input" required />
+        </label>
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">Price</span>
+          <input type="number" step="0.01" name="price" class="input" />
+        </label>
+        <label class="space-y-1">
+          <span class="text-sm font-medium text-gray-700">Capacity</span>
+          <input type="number" name="capacity" class="input" />
+        </label>
+        <label class="space-y-1 md:col-span-2">
+          <span class="text-sm font-medium text-gray-700">Image URL</span>
+          <input name="image_url" class="input" />
+        </label>
+        <label class="space-y-1 md:col-span-2">
+          <span class="text-sm font-medium text-gray-700">Description</span>
+          <textarea name="description" class="input h-24"></textarea>
+        </label>
+        <div class="md:col-span-2 flex justify-end">
+          <button type="submit" class="btn-primary">Create Event</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold text-gray-900">Existing Events</h2>
+      {#if events.length === 0}
+        <p class="text-gray-600">No events found.</p>
+      {:else}
+        <div class="space-y-4">
+          {#each events as event}
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <p class="text-sm text-gray-500">{new Date(event.start_date).toLocaleString()}</p>
+                  <h3 class="text-lg font-semibold text-gray-900">{event.title}</h3>
+                  <p class="text-gray-600">{event.location}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <form method="POST" action="?/deleteEvent">
+                    <input type="hidden" name="id" value={event.id} />
+                    <button type="submit" class="btn-danger">Delete</button>
+                  </form>
+                </div>
+              </div>
+
+              <details class="border-t border-gray-100 pt-4">
+                <summary class="text-sm font-medium text-indigo-600 cursor-pointer">Edit event</summary>
+                <form method="POST" action="?/updateEvent" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  <input type="hidden" name="id" value={event.id} />
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">Title</span>
+                    <input name="title" class="input" value={event.title} />
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">Location</span>
+                    <input name="location" class="input" value={event.location} />
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">Start Date</span>
+                    <input type="datetime-local" name="start_date" class="input" value={event.start_date?.slice(0, 16)} />
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">End Date</span>
+                    <input type="datetime-local" name="end_date" class="input" value={event.end_date?.slice(0, 16)} />
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">Price</span>
+                    <input type="number" step="0.01" name="price" class="input" value={event.price} />
+                  </label>
+                  <label class="space-y-1">
+                    <span class="text-sm font-medium text-gray-700">Capacity</span>
+                    <input type="number" name="capacity" class="input" value={event.capacity} />
+                  </label>
+                  <label class="space-y-1 md:col-span-2">
+                    <span class="text-sm font-medium text-gray-700">Image URL</span>
+                    <input name="image_url" class="input" value={event.image_url} />
+                  </label>
+                  <label class="space-y-1 md:col-span-2">
+                    <span class="text-sm font-medium text-gray-700">Description</span>
+                    <textarea name="description" class="input h-24">{event.description}</textarea>
+                  </label>
+                  <div class="md:col-span-2 flex justify-end">
+                    <button type="submit" class="btn-secondary">Save changes</button>
+                  </div>
+                </form>
+              </details>
+
+              {#if event.tickets?.length}
+                <div class="border-t border-gray-100 pt-4">
+                  <p class="text-sm font-semibold text-gray-800 mb-2">Tickets</p>
+                  <ul class="divide-y divide-gray-100">
+                    {#each event.tickets as ticket}
+                      <li class="py-2 flex items-center justify-between text-sm text-gray-700">
+                        <span>{ticket.type}</span>
+                        <span>${ticket.price} · Qty {ticket.quantity}</span>
+                      </li>
+                    {/each}
+                  </ul>
+                </div>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </section>
   </div>
 {:else}
-  <div class="text-center py-12">
-    <p class="text-gray-600">Please log in to access your dashboard.</p>
-    <a href="/login" class="text-indigo-600 hover:text-indigo-500">Go to Login</a>
-  </div>
+  <section class="max-w-3xl mx-auto mt-16 p-8 bg-white rounded-2xl shadow">
+    <h1 class="text-2xl font-bold mb-2">Access denied</h1>
+    <p class="text-gray-600">
+      You must be an admin to manage events.
+    </p>
+  </section>
 {/if}
+
+<style>
+  .input {
+    @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 border border-gray-300 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+</style>

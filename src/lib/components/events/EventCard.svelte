@@ -1,5 +1,7 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import { goto } from '$app/navigation';
   import { addFadeInAnimation, addCTAPulse } from '$lib/utils/animations';
   import { format } from 'date-fns';
   
@@ -17,21 +19,29 @@
   let ctaButton: HTMLElement;
 
   onMount(() => {
-    // Add fade-in animation when card enters viewport
     if (cardElement) {
       addFadeInAnimation([cardElement]);
     }
-    
-    // Add CTA pulse effect
     if (ctaButton) {
       addCTAPulse(ctaButton);
     }
   });
 
-  // Function to handle ticket purchase - goes through backend API
-  async function handleTicketPurchase() {
-    // Navigate to event details page
-    window.location.href = `/events/${event.id}`;
+  function openDetails() {
+    if (!browser || typeof goto !== 'function') return;
+    try {
+      goto(`/events/${event.id}`);
+    } catch (error) {
+      // Fallback navigation in case goto is unavailable
+      window.location.href = `/events/${event.id}`;
+    }
+  }
+
+  function handleKeydown(eventKey: KeyboardEvent) {
+    if (eventKey.key === 'Enter' || eventKey.key === ' ') {
+      eventKey.preventDefault();
+      openDetails();
+    }
   }
 
   // Truncate description to a reasonable length
@@ -41,9 +51,13 @@
   }
 </script>
 
-<article 
+<div 
   bind:this={cardElement}
-  class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 hover:border-indigo-200 fade-in-observer will-change-transform"
+  class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-out transform hover:-translate-y-2 overflow-hidden border border-gray-100 hover:border-indigo-200 fade-in-observer will-change-transform cursor-pointer"
+  role="button"
+  tabindex="0"
+  on:click={openDetails}
+  on:keydown={handleKeydown}
 >
   <!-- Event Image with Hover Zoom -->
   <div class="relative overflow-hidden h-56 bg-gradient-to-br from-gray-100 to-gray-200">
@@ -85,7 +99,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
-        <span class="font-medium">{format(new Date(event.start_date), 'MMM d, yyyy • h:mm a')}</span>
+        <span class="font-medium">{format(new Date(event.start_date), 'MMM d, yyyy at h:mm a')}</span>
       </div>
       
       <!-- Location -->
@@ -103,7 +117,7 @@
     <!-- Get Tickets Button -->
     <button
       bind:this={ctaButton}
-      on:click={handleTicketPurchase}
+      on:click|stopPropagation={openDetails}
       class="w-full mt-6 relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-offset-2 group/button cta-pulse will-change-transform"
     >
       <!-- Button Background Animation -->
@@ -124,7 +138,7 @@
       <div class="absolute inset-0 -translate-x-full group-hover/button:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
     </button>
   </div>
-</article>
+</div>
 
 <style>
   .line-clamp-2 {

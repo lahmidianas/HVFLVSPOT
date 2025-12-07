@@ -66,7 +66,7 @@
       - region "Upcoming Events" [ref=e84]:
         - generic [ref=e85]:
           - heading "Upcoming Events" [level=2] [ref=e86]
-          - article [ref=e88]:
+          - button "Global Music Fest $80.00 Global Music Fest Sample description Mar 1, 2031 PM1930154400 7:00 PM Nashville, TN Get Tickets" [ref=e88] [cursor=pointer]:
             - generic [ref=e89]:
               - img "Global Music Fest" [ref=e90]
               - generic [ref=e93]: $80.00
@@ -76,11 +76,11 @@
               - generic [ref=e97]:
                 - generic [ref=e98]:
                   - img [ref=e100]
-                  - generic [ref=e102]: Mar 1, 2031 • 7:00 PM
+                  - generic [ref=e102]: Mar 1, 2031 PM1930154400 7:00 PM
                 - generic [ref=e103]:
                   - img [ref=e105]
                   - generic [ref=e108]: Nashville, TN
-              - button "Get Tickets" [ref=e109] [cursor=pointer]:
+              - button "Get Tickets" [ref=e109]:
                 - generic [ref=e112]:
                   - img [ref=e113]
                   - text: Get Tickets

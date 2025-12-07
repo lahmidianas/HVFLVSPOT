@@ -1,12 +1,7 @@
 // @ts-nocheck
-import { supabase } from '$lib/supabase';
-import type { PageLoad } from './$types';
+﻿import type { PageLoad } from './$types';
 
-export const load = async () => {
-  // Get session for authentication state
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  return {
-    session
-  };
-};;null as any as PageLoad;
+export const load = async ({ parent }: Parameters<PageLoad>[0]) => {
+  const { session } = await parent();
+  return { session };
+};
