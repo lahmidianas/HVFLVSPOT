@@ -26,6 +26,10 @@
 	"/login": [
 		"src/routes/+layout.server.ts"
 	],
+	"/organizer": [
+		"src/routes/organizer/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/profile": [
 		"src/routes/+layout.server.ts"
 	],

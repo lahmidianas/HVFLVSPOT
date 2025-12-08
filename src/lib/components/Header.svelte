@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { page } from '$app/stores';
   import { supabase } from '$lib/supabase';
@@ -14,6 +14,7 @@
   let currentSession: Session | null = data?.session ?? null;
   let unsubscribeSession: (() => void) | undefined;
   let isAdmin = false;
+  let isOrganizer = false;
 
   onMount(() => {
     initSession(data?.session ?? null);
@@ -40,6 +41,7 @@
   async function refreshRole() {
     if (!currentSession?.user?.id) {
       isAdmin = false;
+      isOrganizer = false;
       return;
     }
     const { data } = await supabase
@@ -47,7 +49,9 @@
       .select('role')
       .eq('id', currentSession.user.id)
       .single();
-    isAdmin = data?.role === 'admin';
+    const role = data?.role ?? null;
+    isAdmin = role === 'admin';
+    isOrganizer = role === 'organizer';
   }
 
   async function signOut() {
@@ -133,6 +137,15 @@
         >
           Tickets
         </a>
+        {#if isOrganizer}
+          <a
+            href="/organizer"
+            class="nav-link {isActiveRoute('/organizer') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/organizer') ? 'page' : undefined}
+          >
+            My Events
+          </a>
+        {/if}
         {#if isAdmin}
           <a
             href="/dashboard"
@@ -201,6 +214,17 @@
           >
             Tickets
           </a>
+
+          {#if isOrganizer}
+            <a
+              href="/organizer"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/organizer') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/organizer') ? 'page' : undefined}
+            >
+              My Events
+            </a>
+          {/if}
 
           {#if isAdmin}
             <a
