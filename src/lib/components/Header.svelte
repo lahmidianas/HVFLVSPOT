@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { page } from '$app/stores';
   import { supabase } from '$lib/supabase';
@@ -154,6 +154,13 @@
           >
             Dashboard
           </a>
+          <a
+            href="/dashboard/users"
+            class="nav-link {isActiveRoute('/dashboard/users') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/dashboard/users') ? 'page' : undefined}
+          >
+            Users
+          </a>
         {/if}
       </div>
 
@@ -234,6 +241,14 @@
               aria-current={isActiveRoute('/dashboard') ? 'page' : undefined}
             >
               Dashboard
+            </a>
+            <a
+              href="/dashboard/users"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/dashboard/users') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/dashboard/users') ? 'page' : undefined}
+            >
+              Users
             </a>
           {/if}
 

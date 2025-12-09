@@ -1,6 +1,6 @@
 ﻿<script lang="ts">
   export let data;
-  const { isAdmin, events = [], tickets = [] } = data;
+  const { isAdmin, events = [], tickets = [], pendingOrganizers = [] } = data;
 </script>
 
 <svelte:head>
@@ -9,9 +9,26 @@
 
 {#if isAdmin}
   <div class="max-w-6xl mx-auto px-4 py-10 space-y-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Admin - Events</h1>
-      <p class="text-gray-600">Create, edit, and delete events.</p>
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p class="text-gray-600">Manage events, tickets and users.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="/dashboard"
+          class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Events
+        </a>
+        <a
+          href="/dashboard/users"
+          class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+        >
+          Users &amp; Roles
+        </a>
+      </div>
     </div>
 
     <section class="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
@@ -126,7 +143,7 @@
                     {#each event.tickets as ticket}
                       <li class="py-2 flex items-center justify-between text-sm text-gray-700">
                         <span>{ticket.type}</span>
-                        <span>${ticket.price} · Qty {ticket.quantity}</span>
+                        <span>${ticket.price} x Qty {ticket.quantity}</span>
                       </li>
                     {/each}
                   </ul>
@@ -137,13 +154,42 @@
         </div>
       {/if}
     </section>
+
+    <section class="mt-10 bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Organizer applications</h2>
+      {#if pendingOrganizers.length === 0}
+        <p class="text-gray-600 text-sm">No pending applications.</p>
+      {:else}
+        <div class="space-y-4">
+          {#each pendingOrganizers as org}
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border border-gray-100 rounded-lg p-4">
+              <div>
+                <p class="text-sm font-semibold text-gray-900">{org.company_name}</p>
+                <p class="text-sm text-gray-600">{org.contact_email}{#if org.contact_phone} · {org.contact_phone}{/if}</p>
+                {#if org.website_url}
+                  <p class="text-xs text-indigo-600 truncate">{org.website_url}</p>
+                {/if}
+              </div>
+              <div class="flex items-center gap-3">
+                <form method="POST" action="?/approveOrganizer">
+                  <input type="hidden" name="organizer_id" value={org.id} />
+                  <button type="submit" class="btn-primary text-sm">Approve</button>
+                </form>
+                <form method="POST" action="?/removeOrganizer">
+                  <input type="hidden" name="organizer_id" value={org.id} />
+                  <button type="submit" class="btn-danger text-sm">Remove</button>
+                </form>
+              </div>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </section>
   </div>
 {:else}
   <section class="max-w-3xl mx-auto mt-16 p-8 bg-white rounded-2xl shadow">
     <h1 class="text-2xl font-bold mb-2">Access denied</h1>
-    <p class="text-gray-600">
-      You must be an admin to manage events.
-    </p>
+    <p class="text-gray-600">You must be an admin to manage events.</p>
   </section>
 {/if}
 
