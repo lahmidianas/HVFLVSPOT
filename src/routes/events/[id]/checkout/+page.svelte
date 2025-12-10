@@ -231,14 +231,14 @@
                 <span class="font-medium text-gray-900">{ticket.type}</span>
                 <span class="text-gray-600 ml-2">× {quantity}</span>
               </div>
-              <span class="font-medium text-gray-900">${(ticket.price * quantity).toFixed(2)}</span>
+              <span class="font-medium text-gray-900">€{(ticket.price * quantity).toFixed(2)}</span>
             </div>
           {/if}
         {/each}
         
         <div class="border-t pt-3 flex justify-between items-center">
           <span class="text-lg font-semibold text-gray-900">Total</span>
-          <span class="text-2xl font-bold text-indigo-600" role="text" aria-label="Total amount ${cartTotal.toFixed(2)}">${cartTotal.toFixed(2)}</span>
+          <span class="text-2xl font-bold text-indigo-600" role="text" aria-label="Total amount €{cartTotal.toFixed(2)}">€{cartTotal.toFixed(2)}</span>
         </div>
       </div>
 
@@ -313,7 +313,7 @@
               class:focus:ring-offset-2={true}
               aria-describedby="payment-help"
             >
-              {processing ? 'Processing Payment...' : `Pay $${cartTotal.toFixed(2)}`}
+              {processing ? 'Processing Payment...' : `Pay €${cartTotal.toFixed(2)}`}
             </button>
             <div id="payment-help" class="sr-only">Process payment for {cartQuantity} ticket{cartQuantity !== 1 ? 's' : ''}</div>
           {/if}
@@ -332,7 +332,7 @@
       </div>
       
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Purchase Complete!</h1>
-      <p class="text-gray-600 mb-2">Your payment of <span class="font-semibold">${cartTotal.toFixed(2)}</span> has been processed.</p>
+      <p class="text-gray-600 mb-2">Your payment of <span class="font-semibold">€{cartTotal.toFixed(2)}</span> has been processed.</p>
       <p class="text-gray-600 mb-8">Your tickets are ready and available in your wallet.</p>
       
       <div class="max-w-md mx-auto space-y-4">
@@ -372,7 +372,7 @@
       </div>
       
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Payment Processed</h1>
-      <p class="text-gray-600 mb-2">Your payment of <span class="font-semibold">${cartTotal.toFixed(2)}</span> has been successfully processed.</p>
+      <p class="text-gray-600 mb-2">Your payment of <span class="font-semibold">€{cartTotal.toFixed(2)}</span> has been successfully processed.</p>
       <p class="text-gray-600 mb-8">Ticketing is not yet enabled for this event. Please try later or choose another event.</p>
       
       <div class="max-w-md mx-auto space-y-4">

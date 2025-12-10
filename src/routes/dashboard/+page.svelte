@@ -115,7 +115,7 @@
                     <input type="datetime-local" name="end_date" class="input" value={event.end_date?.slice(0, 16)} />
                   </label>
                   <label class="space-y-1">
-                    <span class="text-sm font-medium text-gray-700">Price</span>
+                    <span class="text-sm font-medium text-gray-700">Price </span>
                     <input type="number" step="0.01" name="price" class="input" value={event.price} />
                   </label>
                   <label class="space-y-1">
@@ -143,7 +143,7 @@
                     {#each event.tickets as ticket}
                       <li class="py-2 flex items-center justify-between text-sm text-gray-700">
                         <span>{ticket.type}</span>
-                        <span>${ticket.price} x Qty {ticket.quantity}</span>
+                        <span>€{ticket.price} x Qty {ticket.quantity}</span>
                       </li>
                     {/each}
                   </ul>
