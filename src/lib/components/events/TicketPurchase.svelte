@@ -189,7 +189,7 @@
             <div class="flex justify-between items-center">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900">{ticket.type}</h3>
-                <p class="text-2xl font-bold text-indigo-600">${ticket.price}</p>
+                <p class="text-2xl font-bold text-indigo-600">€{ticket.price}</p>
                 <p class="text-sm text-gray-500">{ticket.quantity} available</p>
               </div>
               
@@ -229,13 +229,13 @@
               {#if ticket && quantity > 0}
                 <div class="flex justify-between">
                   <span>{ticket.type} × {quantity}</span>
-                  <span>${(ticket.price * quantity).toFixed(2)}</span>
+                  <span>€{(ticket.price * quantity).toFixed(2)}</span>
                 </div>
               {/if}
             {/each}
             <div class="border-t pt-2 flex justify-between font-semibold text-lg">
               <span>Total</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>€{getTotalPrice().toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -282,13 +282,13 @@
           {#if ticket && quantity > 0}
             <div class="flex justify-between">
               <span>{ticket.type} × {quantity}</span>
-              <span>${(ticket.price * quantity).toFixed(2)}</span>
+              <span>€{(ticket.price * quantity).toFixed(2)}</span>
             </div>
           {/if}
         {/each}
         <div class="border-t pt-2 flex justify-between font-semibold text-lg">
           <span>Total</span>
-          <span>${getTotalPrice().toFixed(2)}</span>
+          <span>€{getTotalPrice().toFixed(2)}</span>
         </div>
       </div>
 
@@ -313,7 +313,7 @@
             disabled={purchasing}
             class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
           >
-            {purchasing ? 'Processing...' : `Pay $${getTotalPrice().toFixed(2)}`}
+            {purchasing ? 'Processing...' : `Pay €${getTotalPrice().toFixed(2)}`}
           </button>
         </div>
       </div>

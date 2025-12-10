@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { eventApi } from '$lib/api';
   import { supabase } from '$lib/supabase';
   import Hero from '$lib/components/Hero.svelte';
   import Categories from '$lib/components/Categories.svelte';
@@ -9,21 +8,24 @@
 
   export let data: PageData;
 
-  let recommendedEvents = [];
-  let featuredEvents = [];
+  let recommendedEvents: any[] = [];
+  let featuredEvents: any[] = [];
   let loadingRecommended = false;
   let loadingFeatured = false;
-  let recommendedError = null;
-  let featuredError = null;
-  let isAuthenticated = false;
+  let recommendedError: string | null = null;
+  let featuredError: string | null = null;
 
+  let isAuthenticated = false;
   $: isAuthenticated = !!data.session;
 
+  // Load both blocks from Supabase
   onMount(async () => {
+    // Always load featured events
+    await loadFeaturedEvents();
+
+    // If logged in, ALSO load recommendations
     if (isAuthenticated) {
       await loadRecommendedEvents();
-    } else {
-      await loadFeaturedEvents();
     }
   });
 
@@ -31,29 +33,9 @@
     try {
       loadingRecommended = true;
       recommendedError = null;
-      
-      console.log('🔍 Loading recommended events...');
-      
-      const result = await eventApi.getRecommended({ limit: 6 });
-      console.log('✅ Recommendations loaded:', { count: result.events?.length || 0 });
-      recommendedEvents = result.events || [];
-    } catch (err) {
-      console.error('❌ Recommendations API error:', err);
-      console.log('🔄 Recommendations failed, falling back to featured events');
-      recommendedError = 'Unable to load recommendations. Please try again.';
-      // Fallback to featured events
-      await loadFeaturedEvents();
-    } finally {
-      loadingRecommended = false;
-    }
-  }
 
-  async function loadFeaturedEvents() {
-    try {
-      loadingFeatured = true;
-      featuredError = null;
-      
-      // Featured events are reference data, safe to read directly from Supabase
+      console.log('🔍 Loading recommended events from Supabase...');
+
       const { data, error } = await supabase
         .from('events')
         .select(`
@@ -66,10 +48,45 @@
         .gte('start_date', new Date().toISOString())
         .order('start_date', { ascending: true })
         .limit(6);
-      
+
       if (error) throw error;
-      featuredEvents = data || [];
+
+      recommendedEvents = data ?? [];
+      console.log('✅ Recommendations loaded:', { count: recommendedEvents.length });
     } catch (err) {
+      console.error('❌ Recommendations load error:', err);
+      recommendedError = 'Unable to load recommendations. Please try again.';
+    } finally {
+      loadingRecommended = false;
+    }
+  }
+
+  async function loadFeaturedEvents() {
+    try {
+      loadingFeatured = true;
+      featuredError = null;
+
+      console.log('🔍 Loading featured events...');
+
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          *,
+          categories (
+            name,
+            slug
+          )
+        `)
+        .gte('start_date', new Date().toISOString())
+        .order('start_date', { ascending: true })
+        .limit(6);
+
+      if (error) throw error;
+
+      featuredEvents = data ?? [];
+      console.log('✅ Featured events loaded:', { count: featuredEvents.length });
+    } catch (err) {
+      console.error('❌ Featured events load error:', err);
       featuredError = 'Unable to load events. Please try again.';
     } finally {
       loadingFeatured = false;
@@ -80,13 +97,15 @@
 <main>
   <Hero />
   <Categories />
-  
+
   <!-- Recommended Events (Authenticated Users) -->
   {#if isAuthenticated}
     <section class="bg-white py-12 animate-fade-in" aria-labelledby="recommended-heading">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 id="recommended-heading" class="text-2xl font-bold mb-6 animate-slide-in-left">Recommended for You</h2>
-        
+        <h2 id="recommended-heading" class="text-2xl font-bold mb-6 animate-slide-in-left">
+          Recommended for You
+        </h2>
+
         {#if loadingRecommended}
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
             {#each Array(6) as _}
@@ -146,7 +165,7 @@
       <h2 id="featured-heading" class="text-2xl font-bold mb-6 animate-slide-in-left">
         {isAuthenticated ? 'Featured Events' : 'Upcoming Events'}
       </h2>
-      
+
       {#if loadingFeatured}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
           {#each Array(6) as _}

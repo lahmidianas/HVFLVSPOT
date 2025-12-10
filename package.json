@@ -30,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "qrcode": "^1.5.3",
+    "stripe": "^20.0.0",
     "svelte": "^4.2.7"
   },
   "devDependencies": {

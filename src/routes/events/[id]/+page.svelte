@@ -396,7 +396,7 @@
                                 </span>
                               {/if}
                             </h3>
-                            <p class="text-2xl font-bold text-indigo-600 mt-1">${ticket.price}</p>
+                            <p class="text-2xl font-bold text-indigo-600 mt-1">€{ticket.price}</p>
                           </div>
                           <div class="text-sm text-gray-600 text-right">
                             {#if ticket.quantity === 0}
@@ -458,7 +458,7 @@
                         </div>
                         <div class="flex justify-between items-center">
                           <span class="font-medium text-gray-900">Total Price:</span>
-                          <span class="font-bold text-2xl text-indigo-600">${cartTotal.toFixed(2)}</span>
+                          <span class="font-bold text-2xl text-indigo-600">€{cartTotal.toFixed(2)}</span>
                         </div>
                       </div>
 

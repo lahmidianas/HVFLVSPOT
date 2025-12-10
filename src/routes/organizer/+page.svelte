@@ -342,7 +342,7 @@
                     {#each event.tickets as ticket}
                       <li class="py-2 flex items-center justify-between text-sm text-gray-700">
                         <span>{ticket.type}</span>
-                        <span>${ticket.price} × Qty {ticket.quantity}</span>
+                        <span>â‚¬{ticket.price} ï¿½ Qty {ticket.quantity}</span>
                       </li>
                     {/each}
                   </ul>

@@ -267,7 +267,7 @@
                   
                   <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                     <div class="text-lg font-semibold text-gray-900">
-                      ${ticket.total_price}
+                      €{ticket.total_price}
                     </div>
                     
                     <div class="flex space-x-2">
@@ -378,7 +378,7 @@
                   
                   <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                     <div class="text-lg font-semibold text-gray-900">
-                      ${ticket.total_price}
+                      €{ticket.total_price}
                     </div>
                     
                     <div class="text-sm text-gray-500">

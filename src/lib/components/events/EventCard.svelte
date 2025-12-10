@@ -73,7 +73,7 @@
     <!-- Price Badge -->
     <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
       <span class="text-indigo-600 font-bold text-lg">
-        ${typeof event.price === 'number' ? event.price.toFixed(2) : event.price}
+        €{typeof event.price === 'number' ? event.price.toFixed(2) : event.price}
       </span>
     </div>
   </div>
