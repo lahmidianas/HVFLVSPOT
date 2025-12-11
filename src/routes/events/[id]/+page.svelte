@@ -1,4 +1,3 @@
-
 <script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
@@ -20,9 +19,17 @@
   let purchaseError: string | null = null;
   let purchasing = false;
 
-  // derived values
-  $: cartTotal = getTotalPrice();
-  $: cartQuantity = getTotalQuantity();
+  // derived totals (no helper functions, just pure reactive declarations)
+  let cartQuantity = 0;
+  let cartTotal = 0;
+  $: cartQuantity = Object.values(selectedTickets).reduce(
+    (sum, qty) => sum + Number(qty || 0),
+    0
+  );
+  $: cartTotal = tickets.reduce((sum, ticket) => {
+    const qty = selectedTickets[ticket.id] || 0;
+    return sum + Number(ticket.price || 0) * Number(qty || 0);
+  }, 0);
   $: hasItemsInCart = cartQuantity > 0;
 
   onMount(async () => {
@@ -30,56 +37,53 @@
   });
 
   async function loadEventDetails() {
-  try {
-    loading = true;
-    loadError = null;
-    purchaseError = null;
-    selectedTickets = {};
+    try {
+      loading = true;
+      loadError = null;
+      purchaseError = null;
+      selectedTickets = {};
 
-    console.log('🔍 Loading event details for ID:', eventId);
+      console.log('🔍 Loading event details for ID:', eventId);
 
-    const { data: eventData, error: eventError } = await supabase
-      .from('events')
-      .select(`
-        *,
-        categories (name, slug)
-      `)
-      .eq('id', eventId)
-      .single();
+      const { data: eventData, error: eventError } = await supabase
+        .from('events')
+        .select(`
+          *,
+          categories (name, slug)
+        `)
+        .eq('id', eventId)
+        .single();
 
-    console.log('EVENT RESPONSE:', { eventData, eventError });
+      console.log('EVENT RESPONSE:', { eventData, eventError });
 
-    if (eventError) {
-      console.error('❌ Event loading error:', eventError);
-      throw eventError;
+      if (eventError) {
+        console.error('❌ Event loading error:', eventError);
+        throw eventError;
+      }
+
+      event = eventData;
+
+      const { data: ticketData, error: ticketError } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('price', { ascending: true });
+
+      console.log('TICKETS RESPONSE:', { ticketData, ticketError });
+
+      if (ticketError) {
+        console.error('❌ Failed to load tickets:', ticketError);
+        tickets = [];
+      } else {
+        tickets = ticketData ?? [];
+      }
+    } catch (err) {
+      console.error('❌ Failed to load event:', err);
+      loadError = 'Unable to load event details. Please try again.';
+    } finally {
+      loading = false;
     }
-
-    event = eventData;
-
-    const { data: ticketData, error: ticketError } = await supabase
-      .from('tickets')
-      .select('*')
-      .eq('event_id', eventId)
-      .order('price', { ascending: true });
-
-    console.log('TICKETS RESPONSE:', { ticketData, ticketError });
-
-    if (ticketError) {
-      console.error('❌ Failed to load tickets:', ticketError);
-      tickets = [];
-    } else {
-      tickets = ticketData ?? [];
-    }
-  } catch (err) {
-    console.error('❌ Failed to load event:', err);
-    loadError = 'Unable to load event details. Please try again.';
-  } finally {
-    loading = false;
   }
-}
-
-
-
 
   function updateTicketQuantity(ticketId: string, quantity: number) {
     const ticket = tickets.find((t) => t.id === ticketId);
@@ -92,23 +96,13 @@
     } else {
       selectedTickets[ticketId] = validQuantity;
     }
+
     // force reactivity
     selectedTickets = { ...selectedTickets };
+    console.log('[updateTicketQuantity] selectedTickets =', selectedTickets);
   }
 
-  function getTotalPrice() {
-    return Object.entries(selectedTickets).reduce((total, [ticketId, quantity]) => {
-      const ticket = tickets.find((t) => t.id === ticketId);
-      return total + (ticket ? Number(ticket.price) * Number(quantity) : 0);
-    }, 0);
-  }
-
-  function getTotalQuantity() {
-    return Object.values(selectedTickets).reduce(
-      (total, quantity) => total + Number(quantity),
-      0
-    );
-  }
+  // --- proceed to Stripe checkout via backend ---
 
   async function proceedToCheckout() {
     if (!hasItemsInCart || !event) return;
@@ -120,7 +114,7 @@
       // ensure user is logged in
       const { data: authData, error: authError } = await supabase.auth.getUser();
       if (authError) {
-        console.error('[purchase] auth error', authError.message);
+        console.error('[checkout] auth error', authError.message);
       }
 
       const user = authData?.user ?? null;
@@ -141,74 +135,54 @@
         return;
       }
 
-      // For each ticket in cart: validate, insert booking + transaction, update quantity
-      for (const [ticketId, qtyRaw] of Object.entries(selectedTickets)) {
-        const quantity = Number(qtyRaw);
-        if (!Number.isFinite(quantity) || quantity <= 0) continue;
+      // Build items payload from selectedTickets
+      const items = Object.entries(selectedTickets)
+        .map(([ticketId, quantity]) => ({
+          ticketId,
+          quantity: Number(quantity)
+        }))
+        .filter((i) => i.quantity > 0);
 
-        const ticket = tickets.find((t) => t.id === ticketId);
-        if (!ticket) {
-          purchaseError = 'One of the selected tickets no longer exists.';
-          return;
-        }
-
-        if (quantity > ticket.quantity) {
-          purchaseError = 'Not enough tickets remaining for one of your selections.';
-          return;
-        }
-
-        const totalPrice = Number(ticket.price) * quantity;
-
-        // 1) booking
-        const { error: bookingError } = await supabase.from('bookings').insert({
-          user_id: user.id,
-          event_id: event.id,
-          ticket_id: ticket.id,
-          quantity,
-          total_price: totalPrice,
-          status: 'completed'
-        });
-
-        if (bookingError) {
-          console.error('[purchase] bookings insert error', bookingError.message);
-          purchaseError = bookingError.message;
-          return;
-        }
-
-        // 2) transaction
-        const { error: txError } = await supabase.from('transactions').insert({
-          user_id: user.id,
-          event_id: event.id,
-          ticket_id: ticket.id,
-          amount: totalPrice,
-          status: 'completed',
-          type: 'payment'
-        });
-
-        if (txError) {
-          console.error('[purchase] transactions insert error', txError.message);
-          purchaseError = txError.message;
-          return;
-        }
-
-        // 3) update ticket stock
-        const { error: updateError } = await supabase
-          .from('tickets')
-          .update({ quantity: ticket.quantity - quantity })
-          .eq('id', ticket.id);
-
-        if (updateError) {
-          console.error('[purchase] tickets update error', updateError.message);
-          purchaseError = updateError.message;
-          return;
-        }
+      if (items.length === 0) {
+        purchaseError = 'Please select at least one ticket.';
+        return;
       }
 
-      // Success → go to wallet
-      goto('/wallet');
-    } catch (err: any) {
-      console.error('[purchase] unexpected error', err);
-      purchaseError = 'Something went wrong while processing your purchase.';
+      // Call backend checkout endpoint (Stripe Checkout Session)
+      const res = await fetch('/api/payments/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, items })
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        const redirectUrl = encodeURIComponent(
+          `${$page.url.pathname}${$page.url.search}`
+        );
+        goto(`/login?redirect=${redirectUrl}`);
+        return;
+      }
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        console.error('[checkout] backend error', body);
+        purchaseError =
+          body?.message || 'Failed to initiate payment. Please try again.';
+        return;
+      }
+
+      const data = await res.json();
+      if (!data?.url) {
+        purchaseError = 'Payment gateway did not return a redirect URL.';
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('[checkout] unexpected error', err);
+      purchaseError =
+        'Payment processing failed. Please try again or contact support if the problem persists.';
     } finally {
       purchasing = false;
     }
@@ -450,31 +424,41 @@
                     {/each}
                   </div>
 
-                  {#if hasItemsInCart}
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                      <div class="bg-indigo-50 rounded-lg p-4 mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                          <span class="font-medium text-gray-900">Total Tickets:</span>
-                          <span class="font-bold text-lg text-gray-900">{cartQuantity}</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                          <span class="font-medium text-gray-900">Total Price:</span>
-                          <span class="font-bold text-2xl text-indigo-600">€{cartTotal.toFixed(2)}</span>
-                        </div>
+                  <!-- ORDER SUMMARY -->
+                  <div class="mt-6 pt-6 border-t border-gray-200">
+                    <div class="bg-indigo-50 rounded-lg p-4 mb-4">
+                      <div class="flex justify-between items-center mb-2 text-sm text-gray-700">
+                        <span>Tickets selected</span>
+                        <span class="font-semibold">{cartQuantity}</span>
                       </div>
+                      <div class="flex justify-between items-center">
+                        <span class="font-medium text-gray-900">Total</span>
+                        <span class="font-bold text-2xl text-indigo-600">
+                          €{cartTotal.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
 
+                    {#if hasItemsInCart}
                       <button
                         on:click={proceedToCheckout}
                         disabled={purchasing}
-                        class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200">
+                        class="w-full bg-black text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200">
                         {#if purchasing}
                           Processing...
                         {:else}
-                          Get Tickets
+                          Go to payment
                         {/if}
                       </button>
-                    </div>
-                  {/if}
+                    {:else}
+                      <button
+                        disabled
+                        class="w-full bg-gray-200 text-gray-600 py-3 px-4 rounded-lg font-semibold cursor-not-allowed"
+                      >
+                        Select tickets to continue
+                      </button>
+                    {/if}
+                  </div>
                 {/if}
               </div>
             </div>

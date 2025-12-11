@@ -29,3 +29,6 @@ export const handle: Handle = async ({ event, resolve }) => {
   });
   return response;
 };
+export const csrf = {
+  checkOrigin: false
+};

@@ -7,6 +7,12 @@
 	"/about": [
 		"src/routes/+layout.server.ts"
 	],
+	"/api/payments/checkout": [
+		"src/routes/api/payments/checkout/+server.ts"
+	],
+	"/api/payments/webhook": [
+		"src/routes/api/payments/webhook/+server.ts"
+	],
 	"/dashboard": [
 		"src/routes/dashboard/+page.server.ts",
 		"src/routes/+layout.server.ts"

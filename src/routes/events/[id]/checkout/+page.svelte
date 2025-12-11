@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import { paymentApi, ticketApi } from '$lib/api';
   import { supabase } from '$lib/supabase';
   import { format } from 'date-fns';
   import type { PageData } from './$types';
@@ -89,59 +88,44 @@
       processing = true;
       error = null;
 
-      // Process payment for each ticket type through backend
-      for (const [ticketId, quantity] of Object.entries(selectedTickets)) {
-        const ticket = tickets.find(t => t.id === ticketId);
-        if (!ticket) continue;
+      // Build items payload from selectedTickets
+      const items = Object.entries(selectedTickets)
+        .map(([ticketId, quantity]) => ({ ticketId, quantity }))
+        .filter(i => i.quantity > 0);
 
-        await paymentApi.process({
-          eventId,
-          ticketId,
-          amount: ticket.price * quantity
-        });
+      if (items.length === 0) {
+        error = 'No tickets selected';
+        return;
       }
 
-      // After successful payment, attempt to purchase tickets
-      try {
-        for (const [ticketId, quantity] of Object.entries(selectedTickets)) {
-          await ticketApi.purchase({
-            eventId,
-            ticketId,
-            quantity
-          });
-        }
-        
-        // If ticket purchase succeeds, show success
-        step = 'success';
-      } catch (ticketError) {
-        // Check for authorization errors first
-        if (ticketError.status === 401 || ticketError.status === 403) {
-          goto(`/login?redirect=${encodeURIComponent($page.url.pathname + $page.url.search)}`);
-          return;
-        }
-        
-        // Handle RLS/permission errors gracefully
-        if (ticketError.message.includes('RLS') || 
-            ticketError.message.includes('policy') ||
-            ticketError.message.includes('permission denied') ||
-            ticketError.message.includes('Failed to create') ||
-            ticketError.message.includes('tickets table') ||
-            ticketError.message.includes('INSERT') ||
-            ticketError.message.includes('not yet enabled') ||
-            ticketError.message.includes('Ticketing')) {
-          step = 'ticketing-unavailable';
-        } else {
-          // Other ticket purchase errors
-          throw ticketError;
-        }
-      }
-    } catch (err) {
-      // Check for authorization errors
-      if (err.status === 401 || err.status === 403) {
+      // Call backend checkout endpoint which validates prices/stock and creates Stripe Checkout Session
+      const res = await fetch('/api/payments/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, items })
+      });
+
+      if (res.status === 401 || res.status === 403) {
         goto(`/login?redirect=${encodeURIComponent($page.url.pathname + $page.url.search)}`);
         return;
       }
-      
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        error = body?.message || 'Failed to initiate payment. Please try again.';
+        return;
+      }
+
+      const data = await res.json();
+      if (!data?.url) {
+        error = 'Payment gateway did not return a redirect URL.';
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+
+    } catch (err) {
       error = 'Payment processing failed. Please try again or contact support if the problem persists.';
     } finally {
       processing = false;
