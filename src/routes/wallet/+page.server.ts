@@ -22,6 +22,8 @@ export const load: PageServerLoad = async ({ locals }) => {
       total_price,
       status,
       created_at,
+      qr_code,
+      qr_redeemed,
       events:events (
         id,
         title,

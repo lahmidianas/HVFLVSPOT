@@ -1,3 +1,4 @@
+// src/lib/api.ts
 import { supabase } from './supabase';
 
 /**
@@ -260,6 +261,7 @@ export const apiClient = new ApiClient();
 /**
  * Direct Supabase implementation for user tickets.
  * This is what the wallet page & Refresh button will use.
+ *  👉 UPDATED to include qr_code & qr_redeemed
  */
 async function getUserTicketsFromSupabase() {
   // 1) Get current session
@@ -281,16 +283,21 @@ async function getUserTicketsFromSupabase() {
 
   const userId = session.user.id;
 
-  // 2) Load bookings + related event + ticket
+  // 2) Load bookings + related event + ticket + QR fields
   const { data, error } = await supabase
     .from('bookings')
     .select(
       `
       id,
+      user_id,
+      event_id,
+      ticket_id,
       quantity,
       total_price,
       status,
       created_at,
+      qr_code,
+      qr_redeemed,
       events:events (
         id,
         title,
@@ -333,7 +340,7 @@ export const ticketApi = {
   purchase: (data: Parameters<ApiClient['purchaseTicket']>[0]) =>
     apiClient.purchaseTicket(data),
   validate: (qrCode: string) => apiClient.validateTicket(qrCode),
-  // 🔥 IMPORTANT: Wallet uses this – it now reads directly from Supabase 'bookings'
+  // 🔥 Wallet uses this – now includes qr_code so you can render real QR images
   getUserTickets: () => getUserTicketsFromSupabase()
 };
 

@@ -6,7 +6,7 @@ import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 if (!STRIPE_SECRET_KEY) throw new Error('Missing STRIPE_SECRET_KEY');
 if (!STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET');
 
-// Let Stripe CLI / dashboard decide API version
+// Use account default API version to avoid mismatches with the dashboard/CLI
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -15,17 +15,17 @@ export const POST: RequestHandler = async ({ request }) => {
   const sig = request.headers.get('stripe-signature') ?? '';
   const rawBody = await request.text();
 
-  let event;
+  let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+    console.error('Webhook signature verification failed:', err?.message ?? err);
     return new Response('Invalid signature', { status: 400 });
   }
 
   console.log('✅ Stripe event received:', event.type);
 
-  // We only process successful checkout sessions
+  // Only process checkout.session.completed
   if (event.type !== 'checkout.session.completed') {
     return new Response(`Ignored event type ${event.type}`, { status: 200 });
   }
@@ -38,22 +38,21 @@ export const POST: RequestHandler = async ({ request }) => {
     const event_id = metadata.event_id;
     const items = metadata.items ? JSON.parse(metadata.items) : [];
 
-    console.log('🧾 Session metadata:', metadata);
+    console.log('Session metadata:', metadata);
 
     if (!user_id || !event_id || !Array.isArray(items)) {
       console.error('Webhook missing metadata', metadata);
       return new Response('Missing metadata', { status: 400 });
     }
 
-    // NOTE: we removed idempotency using reference_id because column is UUID
-    // and Stripe session.id is not UUID. For MVP this is OK.
-
-    // Process each item in the cart
     for (const item of items) {
-      const { ticketId, quantity } = item;
-      if (!ticketId || !quantity) continue;
+      const { ticketId, quantity } = item || {};
+      if (!ticketId || !quantity) {
+        console.warn('Skipping item with missing ticketId/quantity', item);
+        continue;
+      }
 
-      // 1) Load ticket
+      // Load ticket
       const { data: ticket, error: ticketErr } = await supabaseAdmin
         .from('tickets')
         .select('*')
@@ -62,7 +61,6 @@ export const POST: RequestHandler = async ({ request }) => {
 
       if (ticketErr || !ticket) {
         console.error('Ticket missing in webhook processing', ticketId, ticketErr?.message);
-        // Failed transaction record (no reference_id)
         await supabaseAdmin.from('transactions').insert({
           user_id,
           event_id,
@@ -74,7 +72,7 @@ export const POST: RequestHandler = async ({ request }) => {
         continue;
       }
 
-      // 2) Update inventory
+      // Decrement inventory
       const newQty = Number(ticket.quantity) - Number(quantity);
       if (newQty < 0) {
         console.error('Insufficient tickets during webhook for', ticketId);
@@ -92,8 +90,7 @@ export const POST: RequestHandler = async ({ request }) => {
       const { error: updateErr } = await supabaseAdmin
         .from('tickets')
         .update({ quantity: newQty })
-        .eq('id', ticketId)
-        .eq('quantity', ticket.quantity); // optimistic locking
+        .eq('id', ticketId);
 
       if (updateErr) {
         console.error('Failed to decrement ticket inventory', updateErr.message);
@@ -108,8 +105,9 @@ export const POST: RequestHandler = async ({ request }) => {
         continue;
       }
 
-      // 3) Create booking
+      // Create booking
       const total_price = Number(ticket.price) * Number(quantity);
+
       const { data: booking, error: bookingErr } = await supabaseAdmin
         .from('bookings')
         .insert({
@@ -118,14 +116,15 @@ export const POST: RequestHandler = async ({ request }) => {
           ticket_id: ticketId,
           quantity,
           total_price,
-          status: 'completed' // <- matches your earlier client code
+          status: 'completed'
         })
         .select()
         .single();
 
-      if (bookingErr) {
-        console.error('Failed to create booking in webhook', bookingErr.message);
-        // rollback inventory
+      if (bookingErr || !booking) {
+        console.error('Failed to create booking in webhook', bookingErr?.message);
+
+        // Roll back inventory
         await supabaseAdmin
           .from('tickets')
           .update({ quantity: ticket.quantity })
@@ -144,17 +143,15 @@ export const POST: RequestHandler = async ({ request }) => {
 
       console.log('✅ Booking created:', booking.id);
 
-      // 4) Create transaction (no reference_id)
-      const { error: txErr } = await supabaseAdmin
-        .from('transactions')
-        .insert({
-          user_id,
-          event_id,
-          ticket_id: ticketId,
-          amount: total_price,
-          status: 'completed',
-          type: 'payment'
-        });
+      // Create transaction
+      const { error: txErr } = await supabaseAdmin.from('transactions').insert({
+        user_id,
+        event_id,
+        ticket_id: ticketId,
+        amount: total_price,
+        status: 'completed',
+        type: 'payment'
+      });
 
       if (txErr) {
         console.error('Failed to create transaction in webhook', txErr.message);
@@ -162,7 +159,7 @@ export const POST: RequestHandler = async ({ request }) => {
     }
 
     return new Response(JSON.stringify({ received: true }), { status: 200 });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error processing checkout.session.completed', err);
     return new Response('Processed with errors', { status: 200 });
   }
