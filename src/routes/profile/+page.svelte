@@ -14,8 +14,18 @@
     : '';
 
   const logOut = async () => {
-    await supabase.auth.signOut();
-    goto('/');
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) {
+      console.error('[profile] signOut error', error.message);
+    }
+    try {
+      Object.keys(localStorage || {}).forEach((key) => {
+        if (key.startsWith('sb-')) localStorage.removeItem(key);
+      });
+    } catch (e) {
+      // ignore storage errors
+    }
+    goto('/login');
   };
 </script>
 

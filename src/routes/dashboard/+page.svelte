@@ -1,13 +1,86 @@
 ﻿<script lang="ts">
   export let data;
-  const { isAdmin, events = [], tickets = [], pendingOrganizers = [] } = data;
+  const {
+    isAdmin,
+    isOrganizer,
+    displayName,
+    events = [],
+    tickets = [],
+    pendingOrganizers = []
+  } = data;
 </script>
 
 <svelte:head>
-  <title>Admin - Events</title>
+  <title>{isOrganizer ? 'Organizer Dashboard' : 'Admin - Events'}</title>
 </svelte:head>
 
-{#if isAdmin}
+{#if isOrganizer}
+  <div
+    class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 page-transition"
+  >
+    <div class="absolute inset-0">
+      <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+      <div
+        class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 2s;"
+      ></div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-400/15 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 4s;"
+      ></div>
+      <div
+        class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.05%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"
+      ></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="mb-8 inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+        <svg class="w-5 h-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <span class="text-white font-medium text-sm tracking-wide">Organizer Tools</span>
+      </div>
+
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight tracking-tight animate-slide-in-left">
+        Organizer Dashboard
+      </h1>
+      <p class="text-xl sm:text-2xl text-white/90 mb-10 leading-relaxed font-light max-w-3xl mx-auto animate-slide-in-right">
+        Scan tickets, manage your events, and track attendance.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up">
+        <a
+          href="/scan"
+          class="group relative inline-flex items-center px-12 py-6 text-xl font-bold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 ease-out transform hover:scale-110 hover:-translate-y-2 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-offset-4 focus:ring-offset-transparent overflow-hidden cta-pulse will-change-transform"
+        >
+          <div class="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+          <span class="relative z-10 flex items-center">
+            <svg class="w-7 h-7 mr-3 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Scan Tickets
+          </span>
+        </a>
+
+        <a
+          href="/organizer/events"
+          class="group inline-flex items-center px-8 py-4 text-lg font-semibold text-white/90 hover:text-white border-2 border-white/30 hover:border-white/60 rounded-xl transition-all duration-300 hover:bg-white/10 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent cta-pulse will-change-transform"
+        >
+          My Events
+          <svg class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+
+      {#if displayName}
+        <p class="mt-8 text-white/80 text-sm">Welcome back, {displayName}</p>
+      {/if}
+    </div>
+  </div>
+{:else if isAdmin}
   <div class="max-w-6xl mx-auto px-4 py-10 space-y-8">
     <div class="flex items-center justify-between mb-6">
       <div>

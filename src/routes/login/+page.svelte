@@ -83,8 +83,22 @@
 
         if (signInError) throw signInError;
 
-        // Redirect on successful login
-        goto(redirectUrl);
+        // Resolve role and redirect accordingly
+        const { data: userData } = await supabase.auth.getUser();
+        const userId = userData?.user?.id;
+        let role: string | null = null;
+
+        if (userId) {
+          const { data: roleData } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', userId)
+            .maybeSingle();
+          role = roleData?.role ?? null;
+        }
+
+        const target = role === 'organizer' ? '/dashboard' : redirectUrl || '/';
+        goto(target);
       }
     } catch (err) {
       if (err.message.includes('Invalid login credentials')) {

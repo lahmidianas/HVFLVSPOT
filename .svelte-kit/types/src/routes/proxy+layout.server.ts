@@ -3,5 +3,5 @@
 
 export const load = async ({ locals }: Parameters<LayoutServerLoad>[0]) => {
   const session = await locals.getSession();
-  return { session };
+  return { session, role: locals.role ?? null };
 };

@@ -41,8 +41,24 @@ const resolveEmail = async (locals: any) => {
 };
 
 export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
+  const session = await locals.getSession();
   const email = await resolveEmail(locals);
   const isAdmin = email === ADMIN_EMAIL;
+  const role = locals.role ?? null;
+  const isOrganizer = role === 'organizer';
+
+  // Organizer homepage does not need admin datasets
+  if (isOrganizer) {
+    return {
+      isAdmin: false,
+      isOrganizer: true,
+      displayName:
+        (session?.user?.user_metadata?.full_name as string) ||
+        (session?.user?.user_metadata?.name as string) ||
+        session?.user?.email?.split('@')[0] ||
+        'Organizer'
+    };
+  }
 
   const supabase = locals.supabase;
 
@@ -64,6 +80,12 @@ export const load = async ({ locals }: Parameters<PageServerLoad>[0]) => {
 
   return {
     isAdmin,
+    isOrganizer: false,
+    displayName:
+      (session?.user?.user_metadata?.full_name as string) ||
+      (session?.user?.user_metadata?.name as string) ||
+      session?.user?.email?.split('@')[0] ||
+      'Admin',
     events: events ?? [],
     tickets: tickets ?? [],
     pendingOrganizers: pendingOrganizers ?? []

@@ -5,7 +5,7 @@
   import { initSession, sessionStore } from '$lib/stores/session';
   import type { Session } from '@supabase/supabase-js';
 
-  type HeaderData = { session: Session | null };
+  type HeaderData = { session: Session | null; role?: string | null };
   export let data: HeaderData;
 
   let mobileMenuOpen = false;
@@ -13,8 +13,15 @@
   let avatarInitial = 'U';
   let currentSession: Session | null = data?.session ?? null;
   let unsubscribeSession: (() => void) | undefined;
-  let isAdmin = false;
-  let isOrganizer = false;
+  let isAdmin = data?.role === 'admin';
+  let isOrganizer = data?.role === 'organizer';
+  let homePath = '/';
+
+  const resolveHomePath = (role?: string | null) => {
+    if (role === 'organizer') return '/dashboard';
+    if (role === 'admin') return '/dashboard';
+    return '/';
+  };
 
   onMount(() => {
     initSession(data?.session ?? null);
@@ -36,12 +43,14 @@
         (user.email ? user.email.split('@')[0] : '')
       : '';
     avatarInitial = displayName ? displayName.trim()[0]?.toUpperCase() : 'U';
+    homePath = resolveHomePath(isOrganizer ? 'organizer' : isAdmin ? 'admin' : null);
   }
 
   async function refreshRole() {
     if (!currentSession?.user?.id) {
       isAdmin = false;
       isOrganizer = false;
+      homePath = resolveHomePath(null);
       return;
     }
     const { data } = await supabase
@@ -52,12 +61,25 @@
     const role = data?.role ?? null;
     isAdmin = role === 'admin';
     isOrganizer = role === 'organizer';
+    homePath = resolveHomePath(role);
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    // best-effort sign out + local cleanup so session does not stick around after navigation
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) {
+      console.error('[auth] signOut error', error.message);
+    }
+    sessionStore.set(null);
     currentSession = null;
-    window.location.href = '/';
+    try {
+      Object.keys(localStorage || {}).forEach((key) => {
+        if (key.startsWith('sb-')) localStorage.removeItem(key);
+      });
+    } catch (e) {
+      // ignore storage errors
+    }
+    window.location.replace('/login');
   }
 
   function toggleMobileMenu() {
@@ -100,7 +122,7 @@
 
       <div class="flex-1 flex justify-center lg:justify-center">
         <a
-          href="/"
+          href={homePath}
           class="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-md px-2 py-1"
           aria-label="HVFLVSPOT homepage"
         >
@@ -109,41 +131,56 @@
       </div>
 
       <div class="hidden lg:flex lg:items-center lg:space-x-8">
-        <a
-          href="/"
-          class="nav-link {isActiveRoute('/') ? 'nav-link-active' : ''}"
-          aria-current={isActiveRoute('/') ? 'page' : undefined}
-        >
-          Home
-        </a>
-        <a
-          href="/events"
-          class="nav-link {isActiveRoute('/events') ? 'nav-link-active' : ''}"
-          aria-current={isActiveRoute('/events') ? 'page' : undefined}
-        >
-          All Events
-        </a>
-        <a
-          href="/search"
-          class="nav-link {isActiveRoute('/search') ? 'nav-link-active' : ''}"
-          aria-current={isActiveRoute('/search') ? 'page' : undefined}
-        >
-          Search
-        </a>
-        <a
-          href="/wallet"
-          class="nav-link {isActiveRoute('/wallet') ? 'nav-link-active' : ''}"
-          aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
-        >
-          Tickets
-        </a>
         {#if isOrganizer}
+          <a
+            href="/dashboard"
+            class="nav-link {isActiveRoute('/dashboard') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/dashboard') ? 'page' : undefined}
+          >
+            Dashboard
+          </a>
+          <a
+            href="/scan"
+            class="nav-link {isActiveRoute('/scan') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/scan') ? 'page' : undefined}
+          >
+            Scan Tickets
+          </a>
           <a
             href="/organizer"
             class="nav-link {isActiveRoute('/organizer') ? 'nav-link-active' : ''}"
             aria-current={isActiveRoute('/organizer') ? 'page' : undefined}
           >
             My Events
+          </a>
+        {:else}
+          <a
+            href="/"
+            class="nav-link {isActiveRoute('/') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/') ? 'page' : undefined}
+          >
+            Home
+          </a>
+          <a
+            href="/events"
+            class="nav-link {isActiveRoute('/events') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/events') ? 'page' : undefined}
+          >
+            All Events
+          </a>
+          <a
+            href="/search"
+            class="nav-link {isActiveRoute('/search') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/search') ? 'page' : undefined}
+          >
+            Search
+          </a>
+          <a
+            href="/wallet"
+            class="nav-link {isActiveRoute('/wallet') ? 'nav-link-active' : ''}"
+            aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
+          >
+            Tickets
           </a>
         {/if}
         {#if isAdmin}
@@ -190,39 +227,26 @@
       <div class="lg:hidden" id="mobile-menu">
         <div class="space-y-1 pb-3 pt-2 border-t border-gray-200 bg-white">
           <a
-            href="/"
+            href={homePath}
             on:click={closeMobileMenu}
             class="mobile-nav-link {isActiveRoute('/') ? 'mobile-nav-link-active' : ''}"
             aria-current={isActiveRoute('/') ? 'page' : undefined}
           >
-            Home
+            {#if isOrganizer}
+              Dashboard
+            {:else}
+              Home
+            {/if}
           </a>
-          <a
-            href="/events"
-            on:click={closeMobileMenu}
-            class="mobile-nav-link {isActiveRoute('/events') ? 'mobile-nav-link-active' : ''}"
-            aria-current={isActiveRoute('/events') ? 'page' : undefined}
-          >
-            All Events
-          </a>
-          <a
-            href="/search"
-            on:click={closeMobileMenu}
-            class="mobile-nav-link {isActiveRoute('/search') ? 'mobile-nav-link-active' : ''}"
-            aria-current={isActiveRoute('/search') ? 'page' : undefined}
-          >
-            Search
-          </a>
-          <a
-            href="/wallet"
-            on:click={closeMobileMenu}
-            class="mobile-nav-link {isActiveRoute('/wallet') ? 'mobile-nav-link-active' : ''}"
-            aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
-          >
-            Tickets
-          </a>
-
           {#if isOrganizer}
+            <a
+              href="/scan"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/scan') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/scan') ? 'page' : undefined}
+            >
+              Scan Tickets
+            </a>
             <a
               href="/organizer"
               on:click={closeMobileMenu}
@@ -230,6 +254,31 @@
               aria-current={isActiveRoute('/organizer') ? 'page' : undefined}
             >
               My Events
+            </a>
+          {:else}
+            <a
+              href="/events"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/events') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/events') ? 'page' : undefined}
+            >
+              All Events
+            </a>
+            <a
+              href="/search"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/search') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/search') ? 'page' : undefined}
+            >
+              Search
+            </a>
+            <a
+              href="/wallet"
+              on:click={closeMobileMenu}
+              class="mobile-nav-link {isActiveRoute('/wallet') ? 'mobile-nav-link-active' : ''}"
+              aria-current={isActiveRoute('/wallet') ? 'page' : undefined}
+            >
+              Tickets
             </a>
           {/if}
 
